@@ -116,6 +116,7 @@ button { font: inherit; }
   min-height: 0;
   max-height: clamp(144px, 24vh, 220px);
   padding: clamp(20px, 3vh, 30px);
+  padding-right: clamp(52px, 5vw, 68px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -127,7 +128,73 @@ button { font: inherit; }
   font-size: clamp(1.24rem, 2.18vw, 1.9rem);
   font-weight: 760;
   line-height: 1.28;
+  overflow: visible;
+  position: relative;
+}
+.question-text {
+  display: block;
+  width: 100%;
+  max-height: 100%;
   overflow: auto;
+  padding-inline: clamp(10px, 2vw, 24px);
+}
+.source-badge {
+  position: absolute;
+  top: clamp(12px, 1.7vh, 16px);
+  right: clamp(12px, 1.7vh, 16px);
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(237, 242, 255, 0.92);
+  border: 1px solid rgba(111, 143, 232, 0.24);
+  color: var(--accent-strong);
+  font-size: 0.84rem;
+  font-weight: 850;
+  cursor: help;
+  z-index: 5;
+  box-shadow: 0 8px 18px rgba(100, 124, 170, 0.12);
+  outline: none;
+}
+.source-badge:focus {
+  box-shadow: 0 0 0 4px rgba(111, 143, 232, 0.15), 0 8px 18px rgba(100, 124, 170, 0.12);
+}
+.source-tooltip {
+  position: absolute;
+  top: 36px;
+  right: 0;
+  width: max-content;
+  max-width: min(360px, 72vw);
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(24, 50, 79, 0.96);
+  color: #fff;
+  font-size: 0.77rem;
+  font-weight: 650;
+  line-height: 1.32;
+  text-align: left;
+  box-shadow: 0 18px 40px rgba(24, 50, 79, 0.18);
+  opacity: 0;
+  transform: translateY(-4px) scale(0.98);
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+.source-tooltip::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  right: 10px;
+  width: 12px;
+  height: 12px;
+  background: rgba(24, 50, 79, 0.96);
+  transform: rotate(45deg);
+}
+.source-badge:hover .source-tooltip,
+.source-badge:focus .source-tooltip,
+.source-badge:focus-within .source-tooltip {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 .question-card.ready-next {
   cursor: pointer;
@@ -477,20 +544,19 @@ const DATA_META = {
   "trusted": 272,
   "untrusted": 0,
   "trustedByTema": {
-    "1": 110,
-    "2": 113,
-    "3": 49
+    "1": 116,
+    "2": 85,
+    "3": 71
   },
   "allByTema": {
-    "1": 110,
-    "2": 113,
-    "3": 49
+    "1": 116,
+    "2": 85,
+    "3": 71
   },
   "duplicatesRemoved": 90,
+  "audit": "Reclasificación por procedencia directa en Manual Unidad 1, 2 y 3; revisión 2",
   "duplicateExact": 77,
-  "duplicateFuzzy": 13,
-  "untrustedResolved": 84,
-  "untrustedDeleted": 3
+  "duplicateFuzzy": 13
 };
 
   // Banco final saneado: no queda ninguna pregunta untrusted. Las preguntas sin respuesta fiable fueron eliminadas.
@@ -519,7 +585,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 1"
   },
   {
     "id": "q002",
@@ -545,7 +612,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 2"
   },
   {
     "id": "q003",
@@ -571,7 +639,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 3"
   },
   {
     "id": "q004",
@@ -597,7 +666,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 4"
   },
   {
     "id": "q005",
@@ -623,7 +693,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 5"
   },
   {
     "id": "q006",
@@ -649,7 +720,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 6"
   },
   {
     "id": "q007",
@@ -675,7 +747,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 7"
   },
   {
     "id": "q008",
@@ -701,7 +774,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 8"
   },
   {
     "id": "q009",
@@ -727,7 +801,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 9"
   },
   {
     "id": "q010",
@@ -753,7 +828,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 10"
   },
   {
     "id": "q011",
@@ -779,7 +855,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 11"
   },
   {
     "id": "q012",
@@ -805,11 +882,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 12"
   },
   {
     "id": "q013",
-    "tema": 2,
+    "tema": 3,
     "question": "Las actuales metodologías para la enseñanza de las matemáticas:",
     "options": [
       {
@@ -831,7 +909,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 13"
   },
   {
     "id": "q014",
@@ -857,7 +936,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 14"
   },
   {
     "id": "q015",
@@ -883,7 +963,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 15"
   },
   {
     "id": "q016",
@@ -909,11 +990,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 16"
   },
   {
     "id": "q017",
-    "tema": 3,
+    "tema": 1,
     "question": "El Sistema Experto para el Diagnóstico de Desastres trabaja con:",
     "options": [
       {
@@ -935,7 +1017,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 17"
   },
   {
     "id": "q018",
@@ -961,7 +1044,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 18"
   },
   {
     "id": "q019",
@@ -987,7 +1071,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 19"
   },
   {
     "id": "q020",
@@ -1013,7 +1098,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 20"
   },
   {
     "id": "q021",
@@ -1039,7 +1125,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 21"
   },
   {
     "id": "q022",
@@ -1065,11 +1152,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 22"
   },
   {
     "id": "q023",
-    "tema": 3,
+    "tema": 1,
     "question": "¿Para qué sirve el SEDD?",
     "options": [
       {
@@ -1091,7 +1179,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 23"
   },
   {
     "id": "q024",
@@ -1117,7 +1206,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 24"
   },
   {
     "id": "q025",
@@ -1143,7 +1233,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 25"
   },
   {
     "id": "q026",
@@ -1169,7 +1260,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 26"
   },
   {
     "id": "q027",
@@ -1195,7 +1287,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 27"
   },
   {
     "id": "q028",
@@ -1221,7 +1314,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 28"
   },
   {
     "id": "q029",
@@ -1247,7 +1341,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 29"
   },
   {
     "id": "q030",
@@ -1273,11 +1368,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 30"
   },
   {
     "id": "q031",
-    "tema": 3,
+    "tema": 2,
     "question": "En la LOMLOE los saberes matemáticos se organizan en:",
     "options": [
       {
@@ -1299,7 +1395,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 31"
   },
   {
     "id": "q032",
@@ -1325,7 +1422,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 32"
   },
   {
     "id": "q033",
@@ -1351,7 +1449,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 33"
   },
   {
     "id": "q034",
@@ -1377,7 +1476,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 34"
   },
   {
     "id": "q035",
@@ -1403,7 +1503,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 35"
   },
   {
     "id": "q036",
@@ -1429,11 +1530,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 36"
   },
   {
     "id": "q037",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Qué objetivo tiene la recontextualización de las matemáticas?",
     "options": [
       {
@@ -1455,7 +1557,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 37"
   },
   {
     "id": "q038",
@@ -1481,11 +1584,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 38"
   },
   {
     "id": "q039",
-    "tema": 3,
+    "tema": 2,
     "question": "La LOMLOE implanta un modelo:",
     "options": [
       {
@@ -1507,11 +1611,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 39"
   },
   {
     "id": "q040",
-    "tema": 3,
+    "tema": 2,
     "question": "Los saberes básicos son:",
     "options": [
       {
@@ -1533,11 +1638,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 40"
   },
   {
     "id": "q041",
-    "tema": 3,
+    "tema": 2,
     "question": "¿Quién es el encargado de fijar los objetivos de las competencias clave?",
     "options": [
       {
@@ -1559,7 +1665,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 41"
   },
   {
     "id": "q042",
@@ -1585,11 +1692,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 42"
   },
   {
     "id": "q043",
-    "tema": 3,
+    "tema": 2,
     "question": "¿Cuántas competencias clave existen?",
     "options": [
       {
@@ -1611,7 +1719,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 43"
   },
   {
     "id": "q044",
@@ -1637,7 +1746,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 44"
   },
   {
     "id": "q045",
@@ -1663,7 +1773,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 45"
   },
   {
     "id": "q046",
@@ -1689,7 +1800,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 46"
   },
   {
     "id": "q047",
@@ -1715,7 +1827,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 47"
   },
   {
     "id": "q048",
@@ -1741,7 +1854,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 48"
   },
   {
     "id": "q049",
@@ -1767,7 +1881,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 49"
   },
   {
     "id": "q050",
@@ -1793,7 +1908,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 50"
   },
   {
     "id": "q051",
@@ -1819,7 +1935,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 51"
   },
   {
     "id": "q052",
@@ -1845,7 +1962,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 52"
   },
   {
     "id": "q053",
@@ -1871,7 +1989,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 53"
   },
   {
     "id": "q054",
@@ -1897,7 +2016,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 54"
   },
   {
     "id": "q055",
@@ -1923,7 +2043,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 55"
   },
   {
     "id": "q056",
@@ -1949,7 +2070,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 56"
   },
   {
     "id": "q057",
@@ -1975,7 +2097,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 57"
   },
   {
     "id": "q058",
@@ -2001,7 +2124,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 58"
   },
   {
     "id": "q059",
@@ -2027,7 +2151,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 59"
   },
   {
     "id": "q060",
@@ -2053,7 +2178,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 60"
   },
   {
     "id": "q061",
@@ -2079,11 +2205,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 61"
   },
   {
     "id": "q062",
-    "tema": 3,
+    "tema": 2,
     "question": "Con respecto a los saberes básicos en la LOMLOE:",
     "options": [
       {
@@ -2105,7 +2232,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 62"
   },
   {
     "id": "q063",
@@ -2131,11 +2259,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 63"
   },
   {
     "id": "q064",
-    "tema": 3,
+    "tema": 2,
     "question": "¿Cuál es la opción correcta con respecto a la LOMLOE?",
     "options": [
       {
@@ -2157,7 +2286,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 64"
   },
   {
     "id": "q065",
@@ -2183,7 +2313,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 65"
   },
   {
     "id": "q066",
@@ -2209,7 +2340,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 66"
   },
   {
     "id": "q067",
@@ -2235,7 +2367,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 67"
   },
   {
     "id": "q068",
@@ -2261,7 +2394,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 68"
   },
   {
     "id": "q069",
@@ -2287,11 +2421,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 69"
   },
   {
     "id": "q070",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Qué son los objetivos didácticos?",
     "options": [
       {
@@ -2313,7 +2448,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 70"
   },
   {
     "id": "q071",
@@ -2339,7 +2475,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 71"
   },
   {
     "id": "q072",
@@ -2365,7 +2502,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 72"
   },
   {
     "id": "q073",
@@ -2391,7 +2529,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 73"
   },
   {
     "id": "q074",
@@ -2417,7 +2556,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 74"
   },
   {
     "id": "q075",
@@ -2443,7 +2583,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 75"
   },
   {
     "id": "q076",
@@ -2469,7 +2610,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 76"
   },
   {
     "id": "q077",
@@ -2495,7 +2637,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 77"
   },
   {
     "id": "q078",
@@ -2521,11 +2664,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 78"
   },
   {
     "id": "q079",
-    "tema": 3,
+    "tema": 2,
     "question": "¿Cuántas competencias clave hay en la LOMLOE?",
     "options": [
       {
@@ -2547,7 +2691,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 79"
   },
   {
     "id": "q080",
@@ -2573,7 +2718,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 80"
   },
   {
     "id": "q081",
@@ -2599,7 +2745,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 81"
   },
   {
     "id": "q082",
@@ -2625,7 +2772,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 82"
   },
   {
     "id": "q083",
@@ -2651,7 +2799,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 83"
   },
   {
     "id": "q084",
@@ -2677,11 +2826,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 84"
   },
   {
     "id": "q085",
-    "tema": 1,
+    "tema": 3,
     "question": "David Hilbert, en el Congreso de Matemáticas de 1900, propuso una lista de_",
     "options": [
       {
@@ -2703,7 +2853,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 85"
   },
   {
     "id": "q086",
@@ -2729,7 +2880,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 86"
   },
   {
     "id": "q087",
@@ -2755,7 +2907,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 87"
   },
   {
     "id": "q088",
@@ -2781,7 +2934,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 88"
   },
   {
     "id": "q089",
@@ -2807,7 +2961,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 89"
   },
   {
     "id": "q090",
@@ -2833,7 +2988,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 90"
   },
   {
     "id": "q091",
@@ -2859,7 +3015,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 91"
   },
   {
     "id": "q092",
@@ -2885,11 +3042,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 92"
   },
   {
     "id": "q093",
-    "tema": 3,
+    "tema": 1,
     "question": "¿Cuál no es un avance matemático del siglo XX?",
     "options": [
       {
@@ -2911,7 +3069,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 93"
   },
   {
     "id": "q094",
@@ -2937,7 +3096,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 94"
   },
   {
     "id": "q095",
@@ -2963,7 +3123,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 95"
   },
   {
     "id": "q096",
@@ -2989,7 +3150,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 96"
   },
   {
     "id": "q097",
@@ -3015,11 +3177,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 97"
   },
   {
     "id": "q098",
-    "tema": 1,
+    "tema": 3,
     "question": "De los 7 problemas matemáticos del milenio, ¿Cuál se ha resuelto oficialmente?",
     "options": [
       {
@@ -3041,7 +3204,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 98"
   },
   {
     "id": "q099",
@@ -3067,7 +3231,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 99"
   },
   {
     "id": "q100",
@@ -3093,7 +3258,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 100"
   },
   {
     "id": "q101",
@@ -3119,7 +3285,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 101"
   },
   {
     "id": "q102",
@@ -3145,7 +3312,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 102"
   },
   {
     "id": "q103",
@@ -3171,11 +3339,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 103"
   },
   {
     "id": "q104",
-    "tema": 2,
+    "tema": 1,
     "question": "¿Cuándo nació la extensión a decimales del sistema decimal?",
     "options": [
       {
@@ -3197,7 +3366,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 104"
   },
   {
     "id": "q105",
@@ -3223,7 +3393,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 105"
   },
   {
     "id": "q106",
@@ -3249,7 +3420,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 106"
   },
   {
     "id": "q107",
@@ -3275,7 +3447,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 107"
   },
   {
     "id": "q108",
@@ -3301,7 +3474,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 108"
   },
   {
     "id": "q109",
@@ -3327,7 +3501,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 109"
   },
   {
     "id": "q110",
@@ -3353,7 +3528,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 110"
   },
   {
     "id": "q111",
@@ -3379,7 +3555,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 111"
   },
   {
     "id": "q112",
@@ -3405,7 +3582,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 112"
   },
   {
     "id": "q113",
@@ -3431,7 +3609,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 113"
   },
   {
     "id": "q114",
@@ -3457,7 +3636,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 114"
   },
   {
     "id": "q115",
@@ -3483,7 +3663,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 115"
   },
   {
     "id": "q116",
@@ -3509,7 +3690,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 116"
   },
   {
     "id": "q117",
@@ -3535,7 +3717,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 117"
   },
   {
     "id": "q118",
@@ -3561,7 +3744,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 118"
   },
   {
     "id": "q119",
@@ -3587,7 +3771,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 119"
   },
   {
     "id": "q120",
@@ -3613,7 +3798,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 120"
   },
   {
     "id": "q121",
@@ -3639,7 +3825,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 121"
   },
   {
     "id": "q122",
@@ -3665,7 +3852,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 122"
   },
   {
     "id": "q123",
@@ -3691,7 +3879,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 123"
   },
   {
     "id": "q124",
@@ -3717,7 +3906,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 124"
   },
   {
     "id": "q125",
@@ -3743,7 +3933,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 125"
   },
   {
     "id": "q126",
@@ -3769,7 +3960,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 126"
   },
   {
     "id": "q127",
@@ -3795,7 +3987,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 127"
   },
   {
     "id": "q128",
@@ -3821,7 +4014,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 128"
   },
   {
     "id": "q129",
@@ -3847,7 +4041,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 129"
   },
   {
     "id": "q130",
@@ -3873,7 +4068,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 130"
   },
   {
     "id": "q131",
@@ -3899,7 +4095,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 131"
   },
   {
     "id": "q132",
@@ -3925,11 +4122,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 132"
   },
   {
     "id": "q133",
-    "tema": 2,
+    "tema": 3,
     "question": "Según Polya, el primer paso en la resolución de problemas es:",
     "options": [
       {
@@ -3951,7 +4149,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 133"
   },
   {
     "id": "q134",
@@ -3977,7 +4176,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 134"
   },
   {
     "id": "q135",
@@ -4003,7 +4203,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 135"
   },
   {
     "id": "q136",
@@ -4029,7 +4230,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 136"
   },
   {
     "id": "q137",
@@ -4055,7 +4257,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 137"
   },
   {
     "id": "q138",
@@ -4081,7 +4284,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 138"
   },
   {
     "id": "q139",
@@ -4107,7 +4311,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 139"
   },
   {
     "id": "q140",
@@ -4133,7 +4338,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 140"
   },
   {
     "id": "q141",
@@ -4159,7 +4365,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 141"
   },
   {
     "id": "q142",
@@ -4185,11 +4392,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 142"
   },
   {
     "id": "q143",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Cuál no es un tipo de evaluación en la planificación del proceso educativo?",
     "options": [
       {
@@ -4211,11 +4419,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 143"
   },
   {
     "id": "q144",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Cuál es la definición del concepto de matematización?",
     "options": [
       {
@@ -4237,11 +4446,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 144"
   },
   {
     "id": "q145",
-    "tema": 2,
+    "tema": 3,
     "question": "Los contenidos pueden ser:",
     "options": [
       {
@@ -4263,11 +4473,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 145"
   },
   {
     "id": "q146",
-    "tema": 2,
+    "tema": 3,
     "question": "Para realizar las adaptaciones curriculares es necesario:",
     "options": [
       {
@@ -4289,11 +4500,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 146"
   },
   {
     "id": "q147",
-    "tema": 2,
+    "tema": 3,
     "question": "Di cuál es la afirmación correcta",
     "options": [
       {
@@ -4315,7 +4527,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 147"
   },
   {
     "id": "q148",
@@ -4341,7 +4554,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 148"
   },
   {
     "id": "q149",
@@ -4367,7 +4581,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 149"
   },
   {
     "id": "q150",
@@ -4393,7 +4608,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 150"
   },
   {
     "id": "q151",
@@ -4419,11 +4635,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 151"
   },
   {
     "id": "q152",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Cómo se denomina el informe que compara la calidad de la enseñanza con otras referencias internacionales?",
     "options": [
       {
@@ -4445,7 +4662,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 152"
   },
   {
     "id": "q153",
@@ -4471,7 +4689,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 153"
   },
   {
     "id": "q154",
@@ -4497,7 +4716,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 154"
   },
   {
     "id": "q155",
@@ -4523,7 +4743,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 155"
   },
   {
     "id": "q156",
@@ -4549,11 +4770,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 156"
   },
   {
     "id": "q157",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Etapa desarrollan contenidos/metodología/evaluación?",
     "options": [
       {
@@ -4575,7 +4797,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 157"
   },
   {
     "id": "q158",
@@ -4601,7 +4824,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 158"
   },
   {
     "id": "q159",
@@ -4627,11 +4851,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 159"
   },
   {
     "id": "q160",
-    "tema": 2,
+    "tema": 1,
     "question": "El ser humano ha creado y desarrollado herramientas Matemáticas como parte de una necesidad por dominar:",
     "options": [
       {
@@ -4653,11 +4878,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 160"
   },
   {
     "id": "q161",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Debido a qué surge la necesidad de reformular la enseñanza en Matemáticas?",
     "options": [
       {
@@ -4679,7 +4905,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 161"
   },
   {
     "id": "q162",
@@ -4705,7 +4932,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 162"
   },
   {
     "id": "q163",
@@ -4731,11 +4959,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 163"
   },
   {
     "id": "q164",
-    "tema": 2,
+    "tema": 3,
     "question": "Existe la sensación en docentes del cuerpo universitario de que el nivel en los nuevos alumnos en los últimos años en algunos campos de las Matemáticas:",
     "options": [
       {
@@ -4757,11 +4986,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 164"
   },
   {
     "id": "q165",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Cuáles son las etapas del proceso enseñanza-aprendizaje?",
     "options": [
       {
@@ -4783,7 +5013,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 165"
   },
   {
     "id": "q166",
@@ -4809,7 +5040,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 166"
   },
   {
     "id": "q167",
@@ -4835,7 +5067,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 167"
   },
   {
     "id": "q168",
@@ -4861,11 +5094,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 168"
   },
   {
     "id": "q169",
-    "tema": 3,
+    "tema": 2,
     "question": "Los saberes básicos en Matemáticas según la LOMLOE:",
     "options": [
       {
@@ -4887,7 +5121,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 169"
   },
   {
     "id": "q170",
@@ -4913,7 +5148,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 170"
   },
   {
     "id": "q171",
@@ -4939,11 +5175,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 171"
   },
   {
     "id": "q172",
-    "tema": 3,
+    "tema": 2,
     "question": "¿Cuántos sentidos recoge la LOMLOE?",
     "options": [
       {
@@ -4965,7 +5202,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 172"
   },
   {
     "id": "q173",
@@ -4991,7 +5229,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 173"
   },
   {
     "id": "q174",
@@ -5017,7 +5256,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 174"
   },
   {
     "id": "q175",
@@ -5043,7 +5283,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 175"
   },
   {
     "id": "q176",
@@ -5069,7 +5310,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 176"
   },
   {
     "id": "q177",
@@ -5095,7 +5337,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 177"
   },
   {
     "id": "q178",
@@ -5121,7 +5364,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 178"
   },
   {
     "id": "q179",
@@ -5147,7 +5391,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 179"
   },
   {
     "id": "q180",
@@ -5168,16 +5413,17 @@ const DATA_META = {
       },
       {
         "key": "D",
-        "text": "17 objetivos, 169 metas TEMA 2 (7 preguntas)"
+        "text": "17 objetivos, 169 metas"
       }
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 180"
   },
   {
     "id": "q181",
-    "tema": 3,
+    "tema": 2,
     "question": "¿Qué afirmación es la correcta?",
     "options": [
       {
@@ -5199,7 +5445,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 181"
   },
   {
     "id": "q182",
@@ -5225,7 +5472,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 182"
   },
   {
     "id": "q183",
@@ -5251,7 +5499,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 183"
   },
   {
     "id": "q184",
@@ -5277,7 +5526,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "PDF principal"
+    "source": "PDF 205 preguntas",
+    "sourceRef": "PDF 205 preguntas · nº 184"
   },
   {
     "id": "q185",
@@ -5303,7 +5553,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas TESTs.xlsx · hoja 3. Complementos Mate, fila 113 · respuesta marcada con X"
+    "source": "Preguntas TESTs.xlsx · hoja 3. Complementos Mate, fila 113 · respuesta marcada con X",
+    "sourceRef": "Preguntas TESTs.xlsx · nº 19 · hoja 3. Complementos Mate, fila 113"
   },
   {
     "id": "q186",
@@ -5329,7 +5580,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 1 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 1 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 1 · página 1"
   },
   {
     "id": "q187",
@@ -5355,7 +5607,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 1 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 1 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 2 · página 1"
   },
   {
     "id": "q188",
@@ -5381,11 +5634,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 1 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 1 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 4 · página 1"
   },
   {
     "id": "q189",
-    "tema": 2,
+    "tema": 1,
     "question": "¿Quién creó la Academia de Matemáticas en España?",
     "options": [
       {
@@ -5407,11 +5661,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 1 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 1 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 7 · página 1"
   },
   {
     "id": "q190",
-    "tema": 2,
+    "tema": 3,
     "question": "La recontextualización consiste en:",
     "options": [
       {
@@ -5433,7 +5688,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 2 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 2 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 8 · página 2"
   },
   {
     "id": "q191",
@@ -5459,7 +5715,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 2 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 2 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 9 · página 2"
   },
   {
     "id": "q192",
@@ -5485,7 +5742,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 2 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 2 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 10 · página 2"
   },
   {
     "id": "q193",
@@ -5511,11 +5769,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "TXT adicional"
+    "source": "TXT adicional",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 11 · página 2"
   },
   {
     "id": "q194",
-    "tema": 2,
+    "tema": 3,
     "question": "El mecanicismo:",
     "options": [
       {
@@ -5537,11 +5796,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 2 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 2 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 12 · página 2"
   },
   {
     "id": "q195",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Quién se encarga de que exista una coordinación entre las programaciones de los diferentes departamentos?",
     "options": [
       {
@@ -5563,11 +5823,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 2 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 2 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 13 · página 2"
   },
   {
     "id": "q196",
-    "tema": 2,
+    "tema": 3,
     "question": "La programación didáctica deberá incluirse en la PGA:",
     "options": [
       {
@@ -5589,7 +5850,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 3 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 14 · página 3"
   },
   {
     "id": "q197",
@@ -5615,7 +5877,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 3 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 16 · página 3"
   },
   {
     "id": "q198",
@@ -5641,7 +5904,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 3 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 17 · página 3"
   },
   {
     "id": "q199",
@@ -5667,7 +5931,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 3 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 18 · página 3"
   },
   {
     "id": "q200",
@@ -5693,11 +5958,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "TXT adicional"
+    "source": "TXT adicional",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 19 · página 3"
   },
   {
     "id": "q201",
-    "tema": 2,
+    "tema": 3,
     "question": "La programación:",
     "options": [
       {
@@ -5719,11 +5985,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "TXT adicional"
+    "source": "TXT adicional",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 20 · página 3"
   },
   {
     "id": "q202",
-    "tema": 3,
+    "tema": 2,
     "question": "¿Cuántas competencias clave hay en LOMLOE?",
     "options": [
       {
@@ -5745,7 +6012,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 4 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 4 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 21 · página 4"
   },
   {
     "id": "q203",
@@ -5771,7 +6039,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 4 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 4 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 22 · página 4"
   },
   {
     "id": "q204",
@@ -5797,11 +6066,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 4 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 4 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 23 · página 4"
   },
   {
     "id": "q205",
-    "tema": 3,
+    "tema": 2,
     "question": "¿Cómo define la legislación actual, LOMLOE, las competencias?",
     "options": [
       {
@@ -5823,11 +6093,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 4 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 4 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 24 · página 4"
   },
   {
     "id": "q206",
-    "tema": 2,
+    "tema": 3,
     "question": "En el enfoque realista de enseñanza de las matemáticas, ¿qué tipo de matematización se utiliza?",
     "options": [
       {
@@ -5849,11 +6120,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 4 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 4 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 25 · página 4"
   },
   {
     "id": "q207",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Qué tipo de matematización se da en el mecanicismo?",
     "options": [
       {
@@ -5875,7 +6147,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 5 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 5 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 26 · página 5"
   },
   {
     "id": "q208",
@@ -5901,7 +6174,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 5 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 5 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 27 · página 5"
   },
   {
     "id": "q210",
@@ -5927,7 +6201,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 5 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 5 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 29 · página 5"
   },
   {
     "id": "q211",
@@ -5953,7 +6228,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 6 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 32 · página 6"
   },
   {
     "id": "q212",
@@ -5979,7 +6255,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 6 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 33 · página 6"
   },
   {
     "id": "q213",
@@ -6005,11 +6282,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 6 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 34 · página 6"
   },
   {
     "id": "q214",
-    "tema": 2,
+    "tema": 3,
     "question": "El esquema general que debe seguir todo proceso de enseñanza-aprendizaje se puede resumir en tres etapas:",
     "options": [
       {
@@ -6031,11 +6309,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 6 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 35 · página 6"
   },
   {
     "id": "q215",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Cuándo se aceptó el fracaso de la nueva matemática?",
     "options": [
       {
@@ -6057,7 +6336,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 6 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 36 · página 6"
   },
   {
     "id": "q216",
@@ -6083,7 +6363,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 6 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 37 · página 6"
   },
   {
     "id": "q217",
@@ -6109,7 +6390,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 6 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 38 · página 6"
   },
   {
     "id": "q218",
@@ -6135,11 +6417,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 7 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 7 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 39 · página 7"
   },
   {
     "id": "q220",
-    "tema": 2,
+    "tema": 3,
     "question": "El estilo de enseñanza matemática que considera las matemáticas como una ciencia lógico-deductiva es:",
     "options": [
       {
@@ -6161,11 +6444,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 7 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 7 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 41 · página 7"
   },
   {
     "id": "q221",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Cuándo surge el movimiento “Back to the basics” o Retorno a lo básico?",
     "options": [
       {
@@ -6187,7 +6471,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 7 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 7 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 43 · página 7"
   },
   {
     "id": "q222",
@@ -6213,11 +6498,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 7 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 7 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 44 · página 7"
   },
   {
     "id": "q224",
-    "tema": 2,
+    "tema": 3,
     "question": "Las asignaturas están estructuradas en:",
     "options": [
       {
@@ -6239,11 +6525,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 8 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 8 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 34 · página 8"
   },
   {
     "id": "q225",
-    "tema": 2,
+    "tema": 3,
     "question": "El estilo o enfoque estructuralista utiliza una matematización:",
     "options": [
       {
@@ -6265,11 +6552,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 8 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 8 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 47 · página 8"
   },
   {
     "id": "q226",
-    "tema": 2,
+    "tema": 3,
     "question": "La recontextualización en las actuales metodologías para la enseñanza de las Matemáticas incluye:",
     "options": [
       {
@@ -6291,7 +6579,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 8 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 8 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 48 · página 8"
   },
   {
     "id": "q227",
@@ -6317,7 +6606,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 8 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 8 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 49 · página 8"
   },
   {
     "id": "q228",
@@ -6343,7 +6633,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 8 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 8 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 50 · página 8"
   },
   {
     "id": "q229",
@@ -6369,11 +6660,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 9 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 9 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 52 · página 9"
   },
   {
     "id": "q230",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Cómo es la enseñanza de las matemáticas según la corriente de enseñanza denominada “Retorno a lo básico”?",
     "options": [
       {
@@ -6395,7 +6687,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "TXT adicional"
+    "source": "TXT adicional",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 53 · página 9"
   },
   {
     "id": "q231",
@@ -6421,7 +6714,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 9 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 9 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 54 · página 9"
   },
   {
     "id": "q232",
@@ -6447,11 +6741,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 10 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 10 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 55 · página 10"
   },
   {
     "id": "q233",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Cuál de los siguientes términos no forma parte de las etapas que debe conseguir todo proceso de enseñanza-aprendizaje?",
     "options": [
       {
@@ -6473,7 +6768,8 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 10 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 10 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 57 · página 10"
   },
   {
     "id": "q234",
@@ -6499,11 +6795,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 10 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 10 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 59 · página 10"
   },
   {
     "id": "q235",
-    "tema": 3,
+    "tema": 2,
     "question": "Señala la afirmación correcta respecto a la LOMLOE:",
     "options": [
       {
@@ -6525,7 +6822,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 11 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 11 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 61 · página 11"
   },
   {
     "id": "q236",
@@ -6551,7 +6849,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 11 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 11 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 62 · página 11"
   },
   {
     "id": "q237",
@@ -6577,7 +6876,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 11 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 11 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 63 · página 11"
   },
   {
     "id": "q238",
@@ -6603,11 +6903,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 11 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 11 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 64 · página 11"
   },
   {
     "id": "q239",
-    "tema": 3,
+    "tema": 2,
     "question": "Los saberes básicos se refieren al:",
     "options": [
       {
@@ -6629,7 +6930,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 12 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 12 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 66 · página 12"
   },
   {
     "id": "q240",
@@ -6655,7 +6957,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 12 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 12 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 67 · página 12"
   },
   {
     "id": "q241",
@@ -6681,11 +6984,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 12 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 12 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 68 · página 12"
   },
   {
     "id": "q242",
-    "tema": 3,
+    "tema": 1,
     "question": "¿Qué se estima con el sistema SEDD?",
     "options": [
       {
@@ -6707,7 +7011,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 12 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 12 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 70 · página 12"
   },
   {
     "id": "q243",
@@ -6733,7 +7038,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 5 Cristina.pdf · página 13 · respuesta marcada con fuente coloreada"
+    "source": "Preguntas examen 5 Cristina · página 13 · respuesta marcada con fuente coloreada",
+    "sourceRef": "Preguntas examen 5 Cristina · nº 73 · página 13"
   },
   {
     "id": "q244",
@@ -6759,7 +7065,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 1 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 1 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 4 · página 1"
   },
   {
     "id": "q245",
@@ -6785,7 +7092,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 2 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 2 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 5 · página 2"
   },
   {
     "id": "q246",
@@ -6811,7 +7119,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 2 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 2 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 6 · página 2"
   },
   {
     "id": "q247",
@@ -6837,11 +7146,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 2 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 2 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 7 · página 2"
   },
   {
     "id": "q248",
-    "tema": 1,
+    "tema": 3,
     "question": "¿Qué objetivo no se debe evaluar nunca?",
     "options": [
       {
@@ -6863,7 +7173,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 2 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 2 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 8 · página 2"
   },
   {
     "id": "q249",
@@ -6889,7 +7200,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 2 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 2 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 9 · página 2"
   },
   {
     "id": "q250",
@@ -6915,7 +7227,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 3 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 3 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 10 · página 3"
   },
   {
     "id": "q251",
@@ -6941,7 +7254,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 3 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 3 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 11 · página 3"
   },
   {
     "id": "q252",
@@ -6967,7 +7281,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 3 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 3 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 12 · página 3"
   },
   {
     "id": "q253",
@@ -6993,7 +7308,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 3 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 3 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 13 · página 3"
   },
   {
     "id": "q254",
@@ -7019,7 +7335,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 4 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 4 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 14 · página 4"
   },
   {
     "id": "q255",
@@ -7045,7 +7362,8 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 4 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 4 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 15 · página 4"
   },
   {
     "id": "q256",
@@ -7071,7 +7389,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 4 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 4 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 16 · página 4"
   },
   {
     "id": "q257",
@@ -7097,7 +7416,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 4 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 4 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 17 · página 4"
   },
   {
     "id": "q258",
@@ -7123,7 +7443,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 5 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 5 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 18 · página 5"
   },
   {
     "id": "q259",
@@ -7149,11 +7470,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 5 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 5 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 19 · página 5"
   },
   {
     "id": "q260",
-    "tema": 2,
+    "tema": 3,
     "question": "Los objetivos didácticos se definen...",
     "options": [
       {
@@ -7175,7 +7497,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 6 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 6 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 25 · página 6"
   },
   {
     "id": "q261",
@@ -7201,7 +7524,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 6 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 6 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 26 · página 6"
   },
   {
     "id": "q262",
@@ -7227,11 +7551,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 6 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 6 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 28 · página 6"
   },
   {
     "id": "q263",
-    "tema": 2,
+    "tema": 3,
     "question": "La técnica en la que un grupo de personas en conjunto deben crear ideas al iniciar una sesión de trabajo y puede conseguir involucrar y motivar a todo el grupo se denomina",
     "options": [
       {
@@ -7253,11 +7578,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 7 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 7 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 29 · página 7"
   },
   {
     "id": "q264",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Qué técnica es conveniente utilizar por lo general, al inicio de un curso o programa, para que los alumnos informen acerca de sus intereses, necesidades, problemas, deseos y sugerencias?",
     "options": [
       {
@@ -7279,11 +7605,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 7 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 7 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 30 · página 7"
   },
   {
     "id": "q265",
-    "tema": 2,
+    "tema": 3,
     "question": "Señala cuál de estas afirmaciones es una ventaja de las técnica Phillips 66.",
     "options": [
       {
@@ -7305,11 +7632,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 7 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 7 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 31 · página 7"
   },
   {
     "id": "q266",
-    "tema": 2,
+    "tema": 3,
     "question": "¿En cuál, de estas técnicas de trabajo en grupo, se divide a la clase en parejas?",
     "options": [
       {
@@ -7331,7 +7659,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 7 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 7 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 32 · página 7"
   },
   {
     "id": "q267",
@@ -7357,11 +7686,12 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 8 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 8 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 33 · página 8"
   },
   {
     "id": "q268",
-    "tema": 2,
+    "tema": 3,
     "question": "Un ítem de un examen tipo test se compone",
     "options": [
       {
@@ -7383,7 +7713,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 8 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 8 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 35 · página 8"
   },
   {
     "id": "q269",
@@ -7409,11 +7740,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 8 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 8 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 36 · página 8"
   },
   {
     "id": "q270",
-    "tema": 2,
+    "tema": 3,
     "question": "¿Qué es Phillips 66?",
     "options": [
       {
@@ -7435,11 +7767,12 @@ const DATA_META = {
     ],
     "correctKey": "B",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 8 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 8 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 37 · página 8"
   },
   {
     "id": "q271",
-    "tema": 2,
+    "tema": 3,
     "question": "Un error común en la elaboración de preguntas tipo test es:",
     "options": [
       {
@@ -7461,7 +7794,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 9 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 9 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 38 · página 9"
   },
   {
     "id": "q272",
@@ -7487,11 +7821,12 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 9 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 9 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 42 · página 9"
   },
   {
     "id": "q273",
-    "tema": 2,
+    "tema": 1,
     "question": "¿Cuál de los siguientes matemáticos no contribuyeron en el campo de la estadística en la época moderna?",
     "options": [
       {
@@ -7513,11 +7848,12 @@ const DATA_META = {
     ],
     "correctKey": "D",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 13 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 13 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 58 · página 13"
   },
   {
     "id": "q274",
-    "tema": 2,
+    "tema": 1,
     "question": "En el siglo XX continua el avance de las matemáticas como profesión.",
     "options": [
       {
@@ -7539,7 +7875,8 @@ const DATA_META = {
     ],
     "correctKey": "C",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 13 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 13 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 62 · página 13"
   },
   {
     "id": "q275",
@@ -7565,7 +7902,8 @@ const DATA_META = {
     ],
     "correctKey": "A",
     "trusted": true,
-    "source": "Preguntas examen 6 Otros.pdf · página 14 · respuesta marcada con sombreado amarillo"
+    "source": "Preguntas examen 6 Otros · página 14 · respuesta marcada con sombreado amarillo",
+    "sourceRef": "Preguntas examen 6 Otros · nº 65 · página 14"
   }
 ];
 
@@ -7876,6 +8214,11 @@ function startTimer() {
     `;
   }
 
+
+  function sourceLabel(q) {
+    return q.sourceRef || q.source || "Fuente no especificada";
+  }
+
   function renderQuiz() {
     const q = state.currentTest[state.currentIndex];
     if (!q) return renderError("No hay pregunta activa.");
@@ -7908,7 +8251,13 @@ function startTimer() {
     return `
       <main class="view">
         <section class="frame quiz-frame" aria-label="Test de entrenamiento">
-          <div class="question-card ${answered ? "ready-next" : ""}" data-question-card="true">${escapeHtml(q.question)}</div>
+          <div class="question-card ${answered ? "ready-next" : ""}" data-question-card="true">
+            <span class="source-badge" data-source-icon tabindex="0" title="${escapeHtml(sourceLabel(q))}" aria-label="Fuente: ${escapeHtml(sourceLabel(q))}">
+              ?
+              <span class="source-tooltip">${escapeHtml(sourceLabel(q))}</span>
+            </span>
+            <span class="question-text">${escapeHtml(q.question)}</span>
+          </div>
           <div class="answers">${options}</div>
           ${feedbackHtml}
           ${renderStats()}
@@ -8005,6 +8354,10 @@ function escapeHtml(value) {
     const answerButton = event.target.closest("[data-answer]");
     if (answerButton) {
       answer(answerButton.dataset.answer);
+      return;
+    }
+    if (event.target.closest("[data-source-icon]")) {
+      event.stopPropagation();
       return;
     }
     if (event.target.closest("[data-question-card]")) {
