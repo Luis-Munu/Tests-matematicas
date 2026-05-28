@@ -3,11 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Test Matemáticas VIU</title>
+  <title>Test Matemáticas VIU</title>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%0A%20%20%3Cdefs%3E%0A%20%20%20%20%3ClinearGradient%20id%3D%22g%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%220%22%20stop-color%3D%22%236f8fe8%22%2F%3E%0A%20%20%20%20%20%20%3Cstop%20offset%3D%221%22%20stop-color%3D%22%238fd7c8%22%2F%3E%0A%20%20%20%20%3C%2FlinearGradient%3E%0A%20%20%3C%2Fdefs%3E%0A%20%20%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2216%22%20fill%3D%22url%28%23g%29%22%2F%3E%0A%20%20%3Cpath%20d%3D%22M19%2016h29v8H32.5l9.6%208-9.6%208H49v8H19v-7.2L29.4%2032%2019%2023.2z%22%20fill%3D%22%23fff%22%2F%3E%0A%20%20%3Ccircle%20cx%3D%2249%22%20cy%3D%2217%22%20r%3D%225%22%20fill%3D%22%23fff%22%20opacity%3D%22.78%22%2F%3E%0A%3C%2Fsvg%3E">
   <meta name="theme-color" content="#6f8fe8">
   <style>
-
 :root {
   --bg-1: #f5f8ff;
   --bg-2: #edf5ff;
@@ -320,7 +319,7 @@ button { font: inherit; }
   animation: fadeUp 0.24s cubic-bezier(.2,.8,.2,1);
   font-weight: 650;
 }
-.stats-row {
+.progress-row {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -541,10 +540,263 @@ button { font: inherit; }
   .mode-selector { grid-template-columns: 1fr; }
   .actions-row { flex-direction: column; }
   .btn, .mode-btn { width: 100%; }
-  .stats-row { display: grid; grid-template-columns: 1fr 1fr; }
+  .progress-row { display: grid; grid-template-columns: 1fr 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+
+.settings-trigger {
+  position: fixed;
+  top: clamp(14px, 2.1vw, 24px);
+  right: clamp(14px, 2.1vw, 24px);
+  z-index: 15;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255,255,255,0.82);
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.7);
+  color: var(--accent-strong);
+  box-shadow: 0 14px 34px rgba(101, 123, 160, 0.16);
+  backdrop-filter: blur(18px) saturate(150%);
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  cursor: pointer;
+  transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s ease, background .22s ease;
+}
+.settings-trigger:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(95,126,223,.24); background: rgba(255,255,255,.86); }
+.settings-trigger:active { transform: translateY(0); }
+.settings-trigger svg { width: 22px; height: 22px; }
+.settings-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  background: rgba(24, 50, 79, 0.32);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  animation: overlayIn .22s ease both;
+}
+.settings-modal {
+  position: fixed;
+  z-index: 31;
+  top: 50%;
+  left: 50%;
+  width: min(560px, calc(100vw - 28px));
+  transform: translate(-50%, -50%);
+  border-radius: 30px;
+  padding: clamp(20px, 3vw, 30px);
+  background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(247,250,255,.88));
+  border: 1px solid rgba(255,255,255,.9);
+  box-shadow: 0 34px 90px rgba(24,50,79,.32);
+  display: grid;
+  gap: 18px;
+  animation: modalIn .28s cubic-bezier(.2,.8,.2,1) both;
+}
+.settings-modal h2 { margin: 0; font-size: clamp(1.4rem, 3vw, 2rem); letter-spacing: -0.03em; }
+.settings-modal p { margin: 0; color: var(--text-soft); line-height: 1.45; }
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  background: rgba(239,244,255,.92);
+  color: var(--text);
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 520;
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease;
+}
+.modal-close:hover { transform: scale(1.04); background: #fff; }
+.settings-list { display: grid; gap: 14px; }
+.settings-item {
+  padding: 16px;
+  border-radius: 22px;
+  background: rgba(255,255,255,.66);
+  border: 1px solid rgba(124,152,192,.14);
+  box-shadow: 0 10px 24px rgba(125,143,177,.09);
+  display: grid;
+  gap: 12px;
+}
+.settings-label { font-weight: 780; color: var(--text); }
+.stepper {
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  gap: 10px;
+  align-items: center;
+}
+.step-btn {
+  width: 48px;
+  height: 48px;
+  border: 0;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #6f8fe8, #5c7fdf);
+  color: #fff;
+  font-size: 1.45rem;
+  font-weight: 850;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(95,126,223,.22);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.step-btn:hover { transform: translateY(-1px); box-shadow: 0 16px 28px rgba(95,126,223,.28); }
+.step-btn:active { transform: translateY(0); }
+.step-input,
+.step-value {
+  min-height: 48px;
+  width: 100%;
+  border-radius: 16px;
+  border: 1px solid rgba(124,152,192,.16);
+  background: rgba(255,255,255,.88);
+  color: var(--text);
+  text-align: center;
+  font-size: 1.08rem;
+  font-weight: 780;
+  outline: none;
+}
+.step-input:focus { box-shadow: 0 0 0 4px rgba(111,143,232,.14); border-color: rgba(111,143,232,.38); }
+
+.step-input {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.step-input::-webkit-outer-spin-button,
+.step-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.step-value { display: flex; align-items: center; justify-content: center; padding: 0 12px; }
+.settings-note { font-size: .86rem; }
+
+.source-settings { gap: 14px; }
+.settings-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.source-options {
+  display: grid;
+  gap: 9px;
+  max-height: min(240px, 34vh);
+  overflow: auto;
+  padding-right: 2px;
+}
+.source-choice {
+  width: 100%;
+  border: 1px solid rgba(124,152,192,.16);
+  border-radius: 17px;
+  background: rgba(255,255,255,.74);
+  color: var(--text);
+  padding: 11px 12px;
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  text-align: left;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease, box-shadow .18s ease;
+}
+.source-choice:hover {
+  transform: translateY(-1px);
+  border-color: rgba(111,143,232,.36);
+  box-shadow: 0 12px 24px rgba(125,143,177,.1);
+}
+.source-choice.active {
+  background: linear-gradient(180deg, rgba(238,243,255,.98), rgba(255,255,255,.86));
+  border-color: rgba(111,143,232,.34);
+}
+.source-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  background: rgba(232,238,252,.96);
+  color: transparent;
+  font-weight: 900;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.8);
+}
+.source-choice.active .source-check {
+  color: #fff;
+  background: linear-gradient(180deg, #6f8fe8, #5c7fdf);
+}
+.source-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 720;
+}
+.source-count {
+  padding: 5px 8px;
+  border-radius: 999px;
+  background: rgba(239,244,255,.96);
+  color: var(--text-soft);
+  font-size: .78rem;
+  font-weight: 760;
+}
+.source-choice.active .source-count { color: var(--accent-strong); }
+.mini-link {
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 10px;
+  background: rgba(239,244,255,.92);
+  color: var(--accent-strong);
+  font-size: .82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .18s ease, background .18s ease;
+}
+.mini-link:hover { transform: translateY(-1px); background: #fff; }
+
+.loading-frame { min-height: 360px; justify-items: center; align-content: center; text-align: center; }
+.loader {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 4px solid rgba(111,143,232,.18);
+  border-top-color: var(--accent-strong);
+  animation: spin .8s linear infinite;
+}
+.grade-score {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text);
+  flex-wrap: wrap;
+}
+.grade-score .grade-prefix {
+  font-size: clamp(1.15rem, 2.5vw, 1.55rem);
+  color: var(--text-soft);
+  font-weight: 760;
+}
+.grade-score strong {
+  font-size: clamp(3.2rem, 8vw, 5.4rem);
+  line-height: .98;
+  letter-spacing: -0.05em;
+}
+.grade-score .grade-denom {
+  font-size: clamp(1.25rem, 2.8vw, 1.8rem);
+  color: var(--text-soft);
+  font-weight: 780;
+}
+.result-subtitle strong { color: var(--text); }
+.penalty-line { margin: 0; color: var(--text-soft); font-size: .92rem; }
+@keyframes overlayIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalIn { from { opacity: 0; transform: translate(-50%, -46%) scale(.965); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width: 560px) {
+  .settings-trigger { width: 40px; height: 40px; border-radius: 14px; }
+  .settings-modal { padding-top: 70px; }
+  .stepper { grid-template-columns: 44px minmax(0,1fr) 44px; }
+  .step-btn { width: 44px; height: 44px; }
 }
 
   </style>
@@ -552,6033 +804,30 @@ button { font: inherit; }
 <body>
   <div id="app" class="app-shell"></div>
   <script>
+
   "use strict";
 
-const DATA_META = {
-  "total": 222,
-  "trusted": 222,
-  "untrusted": 0,
-  "trustedByTema": {
-    "1": 91,
-    "2": 66,
-    "3": 65
-  },
-  "allByTema": {
-    "1": 91,
-    "2": 66,
-    "3": 65
-  },
-  "duplicatesRemoved": 133,
-  "audit": "Banco saneado: duplicados semánticos eliminados; textos originales conservados sin renombrar",
-  "duplicateExact": 77,
-  "duplicateFuzzy": 56,
-  "answerAudit": "Respuestas revisadas una a una contra manuales y normativa oficial; preguntas sin opción correcta fiable eliminadas",
-  "answerCorrections": 9,
-  "answerDeleted": 7
-};
-
-  // Banco final saneado: no queda ninguna pregunta untrusted. Las preguntas sin respuesta fiable fueron eliminadas.
-  const QUESTIONS = [
-  {
-    "id": "q001",
-    "tema": 1,
-    "question": "¿Qué origen tiene el sistema de numeración decimal con el cero y las reglas de cálculo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Origen hindú"
-      },
-      {
-        "key": "B",
-        "text": "Origen egipcio"
-      },
-      {
-        "key": "C",
-        "text": "Origen griego"
-      },
-      {
-        "key": "D",
-        "text": "Origen romano"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 1"
-  },
-  {
-    "id": "q002",
-    "tema": 1,
-    "question": "¿A qué civilización pertenecen los documentos más antiguos que se conservan?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Civilización Egipcia"
-      },
-      {
-        "key": "B",
-        "text": "Antigua Grecia"
-      },
-      {
-        "key": "C",
-        "text": "Civilización Sumeria"
-      },
-      {
-        "key": "D",
-        "text": "Roma"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 2"
-  },
-  {
-    "id": "q003",
-    "tema": 1,
-    "question": "¿Cuál es la diferencia entre un teorema y una conjetura?",
-    "options": [
-      {
-        "key": "A",
-        "text": "El teorema debe ser más preciso que la conjetura, es decir, debe estar dotado de más detalles matemáticos."
-      },
-      {
-        "key": "B",
-        "text": "Una conjetura es una afirmación matemática no demostrada, mientras que un teorema es una afirmación matemática demostrada. Además, la demostración debe ser aceptada y validada por la comunidad matemática"
-      },
-      {
-        "key": "C",
-        "text": "Una conjetura es una afirmación matemática no demostrada, mientras que un teorema es una afirmación matemática demostrada. No obstante, la demostración no debe ser necesariamente aceptada por la comunidad matemática"
-      },
-      {
-        "key": "D",
-        "text": "Los teoremas tienen más importancia como resultados matemáticos que las conjeturas"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 3"
-  },
-  {
-    "id": "q004",
-    "tema": 1,
-    "question": "¿Quién fue la primera mujer matemática de la que se tiene constancia?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ada Augusta Byron"
-      },
-      {
-        "key": "B",
-        "text": "Cleopatra"
-      },
-      {
-        "key": "C",
-        "text": "Hypatia de Alejandría"
-      },
-      {
-        "key": "D",
-        "text": "Maria Gaetana Agnesi"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 4"
-  },
-  {
-    "id": "q005",
-    "tema": 1,
-    "question": "¿A qué matemático se le denomina como “el embajador del 0 en Europa”?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Fibonacci"
-      },
-      {
-        "key": "B",
-        "text": "Euclides"
-      },
-      {
-        "key": "C",
-        "text": "Euler"
-      },
-      {
-        "key": "D",
-        "text": "Al Khwarizmi"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 5"
-  },
-  {
-    "id": "q006",
-    "tema": 1,
-    "question": "¿Qué matemático formuló un teorema para el cálculo de los catetos y la hipotenusa?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Platón"
-      },
-      {
-        "key": "B",
-        "text": "Aristóteles"
-      },
-      {
-        "key": "C",
-        "text": "Arquímedes"
-      },
-      {
-        "key": "D",
-        "text": "Pitágoras"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 6"
-  },
-  {
-    "id": "q007",
-    "tema": 1,
-    "question": "¿Cuál fue el paso importante en el siglo XIII para el avance de las matemáticas en Europa?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Traducción de libros árabes y griegos"
-      },
-      {
-        "key": "B",
-        "text": "Creación de las universidades"
-      },
-      {
-        "key": "C",
-        "text": "Desarrollo de la geometría diferencial"
-      },
-      {
-        "key": "D",
-        "text": "Resolución de ecuaciones diferenciales"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 7"
-  },
-  {
-    "id": "q008",
-    "tema": 1,
-    "question": "¿En qué época histórica hay un retroceso cultural y matemático?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Antigua Roma"
-      },
-      {
-        "key": "B",
-        "text": "El Renacimiento"
-      },
-      {
-        "key": "C",
-        "text": "Antigua Grecia"
-      },
-      {
-        "key": "D",
-        "text": "La Edad Media"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 8"
-  },
-  {
-    "id": "q009",
-    "tema": 1,
-    "question": "¿Quién inventó los logaritmos?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Aristóteles"
-      },
-      {
-        "key": "B",
-        "text": "Napier"
-      },
-      {
-        "key": "C",
-        "text": "Euclides"
-      },
-      {
-        "key": "D",
-        "text": "Eduardo Sáenz de Cabezón"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 9"
-  },
-  {
-    "id": "q010",
-    "tema": 1,
-    "question": "¿Qué ciencias engloban el término matemáticas en un principio?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Astronomía, álgebra y geometría"
-      },
-      {
-        "key": "B",
-        "text": "Álgebra y geometría"
-      },
-      {
-        "key": "C",
-        "text": "Geometría, aritmética y astronomía"
-      },
-      {
-        "key": "D",
-        "text": "Aritmética, geometría, álgebra y astronomía"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 10"
-  },
-  {
-    "id": "q011",
-    "tema": 1,
-    "question": "El término de “Matemáticas” definido por la Real Academia Española (RAE) nos dice:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Existe diferencia entre Matemáticas aplicadas y matemáticas puras"
-      },
-      {
-        "key": "B",
-        "text": "Destaca el carácter aplicado de las matemáticas"
-      },
-      {
-        "key": "C",
-        "text": "Es una ciencia deductiva que estudia las propiedades de los entes abstractos, como números, figuras geométricas o símbolos, y sus relaciones"
-      },
-      {
-        "key": "D",
-        "text": "Todas son verdaderas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 11"
-  },
-  {
-    "id": "q012",
-    "tema": 1,
-    "question": "¿Qué geometría es precursora de la geometría griega?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Egipcia"
-      },
-      {
-        "key": "B",
-        "text": "Hindú"
-      },
-      {
-        "key": "C",
-        "text": "Mesopotamia"
-      },
-      {
-        "key": "D",
-        "text": "Sumeria"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 12"
-  },
-  {
-    "id": "q013",
-    "tema": 3,
-    "question": "Las actuales metodologías para la enseñanza de las matemáticas:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Tratan las matemáticas como una actividad social"
-      },
-      {
-        "key": "B",
-        "text": "Se centran en la resolución de problemas"
-      },
-      {
-        "key": "C",
-        "text": "Hacen protagonista el alumno y al profesor lo sitúa como facilitador del proceso de aprendizaje"
-      },
-      {
-        "key": "D",
-        "text": "Todas son correctas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 13"
-  },
-  {
-    "id": "q014",
-    "tema": 1,
-    "question": "¿ Cómo se le llamó al 0 y a los números negativos en las matemáticas desarrolladas en la India?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Vacío y deber"
-      },
-      {
-        "key": "B",
-        "text": "Nada y menos"
-      },
-      {
-        "key": "C",
-        "text": "Nada y deuda"
-      },
-      {
-        "key": "D",
-        "text": "Ninguna es correcta"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 14"
-  },
-  {
-    "id": "q015",
-    "tema": 1,
-    "question": "Dentro de los postulados de Euclides se encuentran:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Todos los ángulos rectos son iguales"
-      },
-      {
-        "key": "B",
-        "text": "Toda recta contiene un conjunto de infinitos puntos"
-      },
-      {
-        "key": "C",
-        "text": "A partir de un punto se puede trazar una circunferencia con centro en ese punto y radio cualquiera"
-      },
-      {
-        "key": "D",
-        "text": "Todas son correctas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 15"
-  },
-  {
-    "id": "q016",
-    "tema": 1,
-    "question": "Los logaritmos se usan para calcular:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Temperaturas"
-      },
-      {
-        "key": "B",
-        "text": "Áreas"
-      },
-      {
-        "key": "C",
-        "text": "PH"
-      },
-      {
-        "key": "D",
-        "text": "Ninguna es correcta"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 16"
-  },
-  {
-    "id": "q017",
-    "tema": 1,
-    "question": "El Sistema Experto para el Diagnóstico de Desastres trabaja con:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Lógica difusa"
-      },
-      {
-        "key": "B",
-        "text": "Lógica real"
-      },
-      {
-        "key": "C",
-        "text": "Lógica aplastante"
-      },
-      {
-        "key": "D",
-        "text": "Lógica en tiempos"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 17"
-  },
-  {
-    "id": "q018",
-    "tema": 1,
-    "question": "¿A qué rama de las matemáticas está vinculado el origen de los logaritmos?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Geometría"
-      },
-      {
-        "key": "B",
-        "text": "Trigonometría"
-      },
-      {
-        "key": "C",
-        "text": "Análisis"
-      },
-      {
-        "key": "D",
-        "text": "Algebra"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 18"
-  },
-  {
-    "id": "q019",
-    "tema": 1,
-    "question": "¿Quién fue el creador del álgebra geométrica?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Tales"
-      },
-      {
-        "key": "B",
-        "text": "Pitágoras"
-      },
-      {
-        "key": "C",
-        "text": "Platón"
-      },
-      {
-        "key": "D",
-        "text": "Hiparco"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 19"
-  },
-  {
-    "id": "q020",
-    "tema": 1,
-    "question": "¿Quién fue el primer matemático conocido que defendió la inducción y la deducción a través de la observación?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Platón"
-      },
-      {
-        "key": "B",
-        "text": "Tales"
-      },
-      {
-        "key": "C",
-        "text": "Aristóteles"
-      },
-      {
-        "key": "D",
-        "text": "Arquímedes"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 20"
-  },
-  {
-    "id": "q021",
-    "tema": 1,
-    "question": "¿Quién escribió “Los elementos” (13 libros sobre geometría y números)?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Tales"
-      },
-      {
-        "key": "B",
-        "text": "Aristóteles"
-      },
-      {
-        "key": "C",
-        "text": "Arquímedes"
-      },
-      {
-        "key": "D",
-        "text": "Euclides"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 21"
-  },
-  {
-    "id": "q022",
-    "tema": 1,
-    "question": "Fundó la Academia de Matemáticas en España",
-    "options": [
-      {
-        "key": "A",
-        "text": "Felipe II"
-      },
-      {
-        "key": "B",
-        "text": "Alfonso X"
-      },
-      {
-        "key": "C",
-        "text": "Carlos V"
-      },
-      {
-        "key": "D",
-        "text": "Juan Carlos I"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 22"
-  },
-  {
-    "id": "q023",
-    "tema": 1,
-    "question": "¿Para qué sirve el SEDD?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Predecir el tiempo"
-      },
-      {
-        "key": "B",
-        "text": "Estimar la magnitud de las catástrofes"
-      },
-      {
-        "key": "C",
-        "text": "Prevenir catástrofes climatológicas"
-      },
-      {
-        "key": "D",
-        "text": "Ninguna es correcta"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 23"
-  },
-  {
-    "id": "q024",
-    "tema": 1,
-    "question": "Nacen con la idea inicial de facilitar cálculos convirtiendo los productos en sumas",
-    "options": [
-      {
-        "key": "A",
-        "text": "Integrales"
-      },
-      {
-        "key": "B",
-        "text": "Derivadas"
-      },
-      {
-        "key": "C",
-        "text": "Logaritmos"
-      },
-      {
-        "key": "D",
-        "text": "Raíces"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 24"
-  },
-  {
-    "id": "q025",
-    "tema": 1,
-    "question": "Elige la opción correcta",
-    "options": [
-      {
-        "key": "A",
-        "text": "Las Matemáticas aparecen estrechamente vinculadas a los avances que la civilización ha ido alcanzando"
-      },
-      {
-        "key": "B",
-        "text": "Las Matemáticas tienen un peso importante en el desarrollo de cualquier sociedad"
-      },
-      {
-        "key": "C",
-        "text": "El ser humano ha creado y desarrollado herramientas matemáticas para comprender el mundo y dominar su entorno"
-      },
-      {
-        "key": "D",
-        "text": "Todas son correctas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 25"
-  },
-  {
-    "id": "q026",
-    "tema": 1,
-    "question": "Señala cuál de estas es la afirmación que defendía Descartes:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Las matemáticas enseñan tanto porque nos ayudan a buscar el bien"
-      },
-      {
-        "key": "B",
-        "text": "Las matemáticas son el lenguaje de las ciencias"
-      },
-      {
-        "key": "C",
-        "text": "Las matemáticas no ayudan a moldear nuestra persona"
-      },
-      {
-        "key": "D",
-        "text": "Las matemáticas ayudan a comprender el mundo en el que estamos"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 26"
-  },
-  {
-    "id": "q027",
-    "tema": 1,
-    "question": "¿Qué significado original tenía la palabra “matemáticas” en griego?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ciencia de los números exactos"
-      },
-      {
-        "key": "B",
-        "text": "Arte de razonar correctamente"
-      },
-      {
-        "key": "C",
-        "text": "Lo que se aprende"
-      },
-      {
-        "key": "D",
-        "text": "Ciencia del cálculo"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 27"
-  },
-  {
-    "id": "q028",
-    "tema": 1,
-    "question": "¿Qué instrumento prehistórico se menciona como evidencia de cálculo primitivo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Regla de Napier"
-      },
-      {
-        "key": "B",
-        "text": "Hueso de Lebombo"
-      },
-      {
-        "key": "C",
-        "text": "Ábaco chino"
-      },
-      {
-        "key": "D",
-        "text": "Tabla de Babilonia"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 28"
-  },
-  {
-    "id": "q029",
-    "tema": 1,
-    "question": "¿Qué aportaron principalmente los árabes a las matemáticas medievales?",
-    "options": [
-      {
-        "key": "A",
-        "text": "El cálculo diferencial"
-      },
-      {
-        "key": "B",
-        "text": "La teoría de conjuntos"
-      },
-      {
-        "key": "C",
-        "text": "El álgebra"
-      },
-      {
-        "key": "D",
-        "text": "La geometría analítica"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 29"
-  },
-  {
-    "id": "q030",
-    "tema": 2,
-    "question": "¿Qué autor formuló el aprendizaje significativo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Piaget"
-      },
-      {
-        "key": "B",
-        "text": "Vygotsky"
-      },
-      {
-        "key": "C",
-        "text": "Bruner"
-      },
-      {
-        "key": "D",
-        "text": "Ausubel"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 30"
-  },
-  {
-    "id": "q031",
-    "tema": 2,
-    "question": "En la LOMLOE los saberes matemáticos se organizan en:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Campos numéricos"
-      },
-      {
-        "key": "B",
-        "text": "Sentidos matemáticos"
-      },
-      {
-        "key": "C",
-        "text": "Bloques de contenidos"
-      },
-      {
-        "key": "D",
-        "text": "Itinerarios conceptuales"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 31"
-  },
-  {
-    "id": "q032",
-    "tema": 2,
-    "question": "¿Quién desarrolló la teoría de la Zona de Desarrollo Próximo (ZDP)?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Piaget"
-      },
-      {
-        "key": "B",
-        "text": "Vygotsky"
-      },
-      {
-        "key": "C",
-        "text": "Bruner"
-      },
-      {
-        "key": "D",
-        "text": "Skinner"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 32"
-  },
-  {
-    "id": "q033",
-    "tema": 2,
-    "question": "¿Cuál es la orientación del enfoque empirista en educación?",
-    "options": [
-      {
-        "key": "A",
-        "text": "El alumno construye conocimiento activamente"
-      },
-      {
-        "key": "B",
-        "text": "El alumno aprende resolviendo problemas"
-      },
-      {
-        "key": "C",
-        "text": "El alumno observa y memoriza información"
-      },
-      {
-        "key": "D",
-        "text": "El docente es un mediador"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 33"
-  },
-  {
-    "id": "q034",
-    "tema": 2,
-    "question": "¿Qué autor relaciona el aprendizaje con “descubrimiento guiado”?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ausubel"
-      },
-      {
-        "key": "B",
-        "text": "Bruner"
-      },
-      {
-        "key": "C",
-        "text": "Vygotsky"
-      },
-      {
-        "key": "D",
-        "text": "Dewey"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 34"
-  },
-  {
-    "id": "q036",
-    "tema": 3,
-    "question": "¿En qué sentido matemático se incluye la gestión emocional del aprendizaje según LOMLOE?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Sentido algebraico"
-      },
-      {
-        "key": "B",
-        "text": "Sentido espacial"
-      },
-      {
-        "key": "C",
-        "text": "Sentido socioafectivo"
-      },
-      {
-        "key": "D",
-        "text": "Sentido estocástico"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 36"
-  },
-  {
-    "id": "q037",
-    "tema": 3,
-    "question": "¿Qué objetivo tiene la recontextualización de las matemáticas?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Reducir el número de contenidos"
-      },
-      {
-        "key": "B",
-        "text": "Ampliar el nivel de abstracción"
-      },
-      {
-        "key": "C",
-        "text": "Conectar las matemáticas con la vida cotidiana"
-      },
-      {
-        "key": "D",
-        "text": "Centrar el aprendizaje en demostraciones"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 37"
-  },
-  {
-    "id": "q038",
-    "tema": 2,
-    "question": "¿Cuál es uno de los principios del aprendizaje significativo de Ausubel?",
-    "options": [
-      {
-        "key": "A",
-        "text": "La memorización mecánica como base del aprendizaje"
-      },
-      {
-        "key": "B",
-        "text": "El conocimiento nuevo debe relacionarse con los conocimientos previos"
-      },
-      {
-        "key": "C",
-        "text": "El alumno debe descubrirlo todo sin guía"
-      },
-      {
-        "key": "D",
-        "text": "El docente es un transmisor de información"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 38"
-  },
-  {
-    "id": "q039",
-    "tema": 2,
-    "question": "La LOMLOE implanta un modelo:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Memorístico"
-      },
-      {
-        "key": "B",
-        "text": "Competencial"
-      },
-      {
-        "key": "C",
-        "text": "Expositivo"
-      },
-      {
-        "key": "D",
-        "text": "Tradicional"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 39"
-  },
-  {
-    "id": "q042",
-    "tema": 3,
-    "question": "Las situaciones de aprendizaje deben:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ser actividades aisladas"
-      },
-      {
-        "key": "B",
-        "text": "Aplicar saberes en contextos reales"
-      },
-      {
-        "key": "C",
-        "text": "Ser exclusivamente teóricas"
-      },
-      {
-        "key": "D",
-        "text": "Basarse en copiar"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 42"
-  },
-  {
-    "id": "q043",
-    "tema": 2,
-    "question": "¿Cuántas competencias clave existen?",
-    "options": [
-      {
-        "key": "A",
-        "text": "4"
-      },
-      {
-        "key": "B",
-        "text": "6"
-      },
-      {
-        "key": "C",
-        "text": "7"
-      },
-      {
-        "key": "D",
-        "text": "8"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 43"
-  },
-  {
-    "id": "q045",
-    "tema": 3,
-    "question": "Los descriptores operativos conectan:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Saberes básicos entre sí"
-      },
-      {
-        "key": "B",
-        "text": "Competencias clave con el perfil de salida"
-      },
-      {
-        "key": "C",
-        "text": "Materias entre sí"
-      },
-      {
-        "key": "D",
-        "text": "Objetivos con libros"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 45"
-  },
-  {
-    "id": "q046",
-    "tema": 2,
-    "question": "La evaluación LOMLOE es:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Punitiva"
-      },
-      {
-        "key": "B",
-        "text": "Formativa"
-      },
-      {
-        "key": "C",
-        "text": "Solo cuantitativa"
-      },
-      {
-        "key": "D",
-        "text": "Cerrada"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 46"
-  },
-  {
-    "id": "q047",
-    "tema": 3,
-    "question": "El Perfil de salida define:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Los libros a utilizar"
-      },
-      {
-        "key": "B",
-        "text": "Qué debe lograr el alumno al finalizar la etapa"
-      },
-      {
-        "key": "C",
-        "text": "Los proyectos obligatorios"
-      },
-      {
-        "key": "D",
-        "text": "Las normas del centro"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 47"
-  },
-  {
-    "id": "q048",
-    "tema": 2,
-    "question": "El currículo incluye:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Competencias, saberes y criterios"
-      },
-      {
-        "key": "B",
-        "text": "Solo contenidos"
-      },
-      {
-        "key": "C",
-        "text": "Horarios"
-      },
-      {
-        "key": "D",
-        "text": "Reglas del centro"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 48"
-  },
-  {
-    "id": "q049",
-    "tema": 3,
-    "question": "La competencia STEM incluye:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Música"
-      },
-      {
-        "key": "B",
-        "text": "Ciencia, tecnología, ingeniería y matemáticas"
-      },
-      {
-        "key": "C",
-        "text": "Educación física"
-      },
-      {
-        "key": "D",
-        "text": "Arte"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 49"
-  },
-  {
-    "id": "q050",
-    "tema": 3,
-    "question": "Los saberes básicos se aplican:",
-    "options": [
-      {
-        "key": "A",
-        "text": "De memoria"
-      },
-      {
-        "key": "B",
-        "text": "En situaciones de aprendizaje"
-      },
-      {
-        "key": "C",
-        "text": "Solo en exámenes"
-      },
-      {
-        "key": "D",
-        "text": "En tareas aisladas"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 50"
-  },
-  {
-    "id": "q051",
-    "tema": 3,
-    "question": "La LOMLOE busca una enseñanza:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Enciclopédica"
-      },
-      {
-        "key": "B",
-        "text": "Interconectada"
-      },
-      {
-        "key": "C",
-        "text": "Individualista"
-      },
-      {
-        "key": "D",
-        "text": "Cerrada"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 51"
-  },
-  {
-    "id": "q052",
-    "tema": 2,
-    "question": "El PEC es:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Un libro de texto"
-      },
-      {
-        "key": "B",
-        "text": "El documento que define la identidad del centro"
-      },
-      {
-        "key": "C",
-        "text": "Un acta de evaluación"
-      },
-      {
-        "key": "D",
-        "text": "Un reglamento municipal"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 52"
-  },
-  {
-    "id": "q053",
-    "tema": 1,
-    "question": "El origen de las primeras matemáticas está relacionado principalmente con:",
-    "options": [
-      {
-        "key": "A",
-        "text": "La investigación científica moderna"
-      },
-      {
-        "key": "B",
-        "text": "Necesidades prácticas de la vida cotidiana"
-      },
-      {
-        "key": "C",
-        "text": "La educación formal"
-      },
-      {
-        "key": "D",
-        "text": "El arte y la filosofía"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 53"
-  },
-  {
-    "id": "q054",
-    "tema": 1,
-    "question": "Una de las primeras funciones de las matemáticas en civilizaciones antiguas fue:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Crear videojuegos"
-      },
-      {
-        "key": "B",
-        "text": "Desarrollar ecuaciones diferenciales"
-      },
-      {
-        "key": "C",
-        "text": "Medir tierras y gestionar el comercio"
-      },
-      {
-        "key": "D",
-        "text": "Generar arte abstracto"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 54"
-  },
-  {
-    "id": "q055",
-    "tema": 1,
-    "question": "El pensamiento matemático deductivo comenzó a desarrollarse principalmente en:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Egipto"
-      },
-      {
-        "key": "B",
-        "text": "Mesopotamia"
-      },
-      {
-        "key": "C",
-        "text": "Grecia"
-      },
-      {
-        "key": "D",
-        "text": "Roma"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 55"
-  },
-  {
-    "id": "q056",
-    "tema": 1,
-    "question": "En la historia de las matemáticas, la Edad Moderna se caracteriza por:",
-    "options": [
-      {
-        "key": "A",
-        "text": "La creación del cálculo infinitesimal"
-      },
-      {
-        "key": "B",
-        "text": "El descubrimiento del cero"
-      },
-      {
-        "key": "C",
-        "text": "La invención del álgebra"
-      },
-      {
-        "key": "D",
-        "text": "La aparición de la geometría euclidiana"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 56"
-  },
-  {
-    "id": "q057",
-    "tema": 1,
-    "question": "Las primeras matemáticas se centraban fundamentalmente en:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Demostraciones abstractas"
-      },
-      {
-        "key": "B",
-        "text": "Filosofía del lenguaje"
-      },
-      {
-        "key": "C",
-        "text": "Conteo, medición y comercio"
-      },
-      {
-        "key": "D",
-        "text": "Probabilidad avanzada"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 57"
-  },
-  {
-    "id": "q058",
-    "tema": 1,
-    "question": "La matemática científica moderna se caracteriza por:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ser puramente intuitiva"
-      },
-      {
-        "key": "B",
-        "text": "Basarse en razonamientos formales y axiomas"
-      },
-      {
-        "key": "C",
-        "text": "Utilizar solo números naturales"
-      },
-      {
-        "key": "D",
-        "text": "Depender de opiniones personales"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 58"
-  },
-  {
-    "id": "q060",
-    "tema": 1,
-    "question": "La geometría analítica fue creada por:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Euclides"
-      },
-      {
-        "key": "B",
-        "text": "Pitágoras"
-      },
-      {
-        "key": "C",
-        "text": "Descartes"
-      },
-      {
-        "key": "D",
-        "text": "Newton"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 60"
-  },
-  {
-    "id": "q061",
-    "tema": 1,
-    "question": "El conocimiento matemático se valida a través de:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Opiniones personales"
-      },
-      {
-        "key": "B",
-        "text": "Procedimientos informales"
-      },
-      {
-        "key": "C",
-        "text": "Demostraciones y razonamientos lógicos"
-      },
-      {
-        "key": "D",
-        "text": "Impresiones subjetivas"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 61"
-  },
-  {
-    "id": "q063",
-    "tema": 2,
-    "question": "Para que un alumno pueda acceder a la FP de Grado Básico…",
-    "options": [
-      {
-        "key": "A",
-        "text": "Debe ser propuesto por el jefe de estudios de la ESO"
-      },
-      {
-        "key": "B",
-        "text": "Debe ser propuesto por el equipo docente del correspondiente Ciclo Formativo de Grado Superior, de la misma familia profesional"
-      },
-      {
-        "key": "C",
-        "text": "Debe ser propuesto por el equipo docente de la ESO"
-      },
-      {
-        "key": "D",
-        "text": "Debe ser propuesto por el equipo docente de Bachillerato"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 63"
-  },
-  {
-    "id": "q064",
-    "tema": 2,
-    "question": "¿Cuál es la opción correcta con respecto a la LOMLOE?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Los contenidos se denominan sentidos de la ciencia"
-      },
-      {
-        "key": "B",
-        "text": "Los contenidos se denominan saberes básicos"
-      },
-      {
-        "key": "C",
-        "text": "Los contenidos se denominan criterios básicos"
-      },
-      {
-        "key": "D",
-        "text": "Los contenidos se denominan saberes deseados"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 64"
-  },
-  {
-    "id": "q066",
-    "tema": 3,
-    "question": "¿En qué año se esperan cumplir los ODS?",
-    "options": [
-      {
-        "key": "A",
-        "text": "2028"
-      },
-      {
-        "key": "B",
-        "text": "2040"
-      },
-      {
-        "key": "C",
-        "text": "2035"
-      },
-      {
-        "key": "D",
-        "text": "2030"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 66"
-  },
-  {
-    "id": "q067",
-    "tema": 3,
-    "question": "Con respecto al perfil de salida en la LOMLOE, ¿cuál es la afirmación correcta?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Es único y el mismo para todo el territorio nacional"
-      },
-      {
-        "key": "B",
-        "text": "Es único para cada instituto, ya que se debe tener en cuenta la diversidad del aula"
-      },
-      {
-        "key": "C",
-        "text": "Es único para cada provincia"
-      },
-      {
-        "key": "D",
-        "text": "Es único para cada comunidad autónoma"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 67"
-  },
-  {
-    "id": "q068",
-    "tema": 2,
-    "question": "Con respecto a las calificaciones en la LOMLOE en Bachillerato:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Los resultados de la evaluación se deben expresar de forma cualitativa siendo la nota por debajo de 4 de insuficiente"
-      },
-      {
-        "key": "B",
-        "text": "Los resultados de la evaluación se deben expresar de forma cualitativa"
-      },
-      {
-        "key": "C",
-        "text": "Los resultados de la evaluación se deben expresar de forma numérica sin decimales"
-      },
-      {
-        "key": "D",
-        "text": "Los resultados de la evaluación se deben expresar de forma numérica con decimales"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 68"
-  },
-  {
-    "id": "q069",
-    "tema": 3,
-    "question": "Pertenece a los objetivos de desarrollo del milenio:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Todas son correctas"
-      },
-      {
-        "key": "B",
-        "text": "Avanzar en la lucha contra el VIH y otras enfermedades"
-      },
-      {
-        "key": "C",
-        "text": "Reducir la mortalidad infantil"
-      },
-      {
-        "key": "D",
-        "text": "Erradicar la pobreza extrema y el hambre"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 69"
-  },
-  {
-    "id": "q070",
-    "tema": 3,
-    "question": "¿Qué son los objetivos didácticos?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Los logros que se espera que el alumnado haya alcanzado al finalizar la etapa"
-      },
-      {
-        "key": "B",
-        "text": "Los contenidos procedimentales"
-      },
-      {
-        "key": "C",
-        "text": "Lo que se utiliza para evaluar al alumno. También se denominan criterios de evaluación"
-      },
-      {
-        "key": "D",
-        "text": "Los contenidos conceptuales"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 70"
-  },
-  {
-    "id": "q072",
-    "tema": 3,
-    "question": "Los Objetivos de Desarrollo Sostenible entraron en vigor en el año:",
-    "options": [
-      {
-        "key": "A",
-        "text": "2015"
-      },
-      {
-        "key": "B",
-        "text": "2025"
-      },
-      {
-        "key": "C",
-        "text": "2020"
-      },
-      {
-        "key": "D",
-        "text": "2000"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 72"
-  },
-  {
-    "id": "q073",
-    "tema": 2,
-    "question": "La titulación de Ciclo Formativo de Grado Medio…",
-    "options": [
-      {
-        "key": "A",
-        "text": "Permite el acceso a un Grado Universitario, siempre y cuando se realice la Prueba de Acceso Universitario (PAU) y se supere dicha prueba"
-      },
-      {
-        "key": "B",
-        "text": "Permite el acceso a un Máster Universitario"
-      },
-      {
-        "key": "C",
-        "text": "Permite el acceso a un Ciclo de Grado Superior"
-      },
-      {
-        "key": "D",
-        "text": "Permite el acceso a un Grado Universitario, siempre y cuando se supere la Prueba de Acceso al Ciclo de Grado Superior"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 73"
-  },
-  {
-    "id": "q074",
-    "tema": 2,
-    "question": "¿Cuál de las siguientes no es una modalidad del Bachillerato en la LOMLOE?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Mixtas"
-      },
-      {
-        "key": "B",
-        "text": "Artes"
-      },
-      {
-        "key": "C",
-        "text": "Humanidades y Ciencias Sociales"
-      },
-      {
-        "key": "D",
-        "text": "Ciencias y Tecnología"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 74"
-  },
-  {
-    "id": "q075",
-    "tema": 2,
-    "question": "La titulación de Ciclo Formativo de Grado Superior…",
-    "options": [
-      {
-        "key": "A",
-        "text": "Permite el acceso a un Grado Universitario de forma directa"
-      },
-      {
-        "key": "B",
-        "text": "Permite el acceso a un Grado Universitario, siempre y cuando se realice la Prueba de Acceso Universitario (PAU) y se supere dicha prueba"
-      },
-      {
-        "key": "C",
-        "text": "Permite el acceso a un Máster Universitario"
-      },
-      {
-        "key": "D",
-        "text": "Permite el acceso a un Grado Universitario, siempre y cuando se supere la Prueba de Acceso al Ciclo de Grado Superior"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 75"
-  },
-  {
-    "id": "q076",
-    "tema": 3,
-    "question": "Los objetivos de desarrollo del milenio comprendían",
-    "options": [
-      {
-        "key": "A",
-        "text": "7 objetivos, 21 indicadores"
-      },
-      {
-        "key": "B",
-        "text": "8 objetivos, 169 metas"
-      },
-      {
-        "key": "C",
-        "text": "9 objetivos, 21 metas"
-      },
-      {
-        "key": "D",
-        "text": "8 objetivos, 21 metas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 76"
-  },
-  {
-    "id": "q077",
-    "tema": 2,
-    "question": "Señala la afirmación correcta",
-    "options": [
-      {
-        "key": "A",
-        "text": "En el caso de la Formación Profesional, FP, existe normativa que regula la oferta de ciclos formativos, a nivel estatal únicamente"
-      },
-      {
-        "key": "B",
-        "text": "En el caso de la Formación Profesional, FP, existe normativa que regula la oferta de ciclos formativos, a nivel provincial únicamente"
-      },
-      {
-        "key": "C",
-        "text": "En el caso de la Formación Profesional, FP, existe normativa que regula la oferta de ciclos formativos, a nivel de Comunidad Autónoma únicamente"
-      },
-      {
-        "key": "D",
-        "text": "En el caso de la Formación Profesional, FP, existe normativa que regula la oferta de ciclos formativos, a nivel estatal y de Comunidad Autónoma"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 77"
-  },
-  {
-    "id": "q078",
-    "tema": 3,
-    "question": "¿Cuántos son los objetivos de desarrollo sostenible?",
-    "options": [
-      {
-        "key": "A",
-        "text": "25"
-      },
-      {
-        "key": "B",
-        "text": "17"
-      },
-      {
-        "key": "C",
-        "text": "30"
-      },
-      {
-        "key": "D",
-        "text": "10"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 78"
-  },
-  {
-    "id": "q080",
-    "tema": 2,
-    "question": "Los ciclos formativos se encuentran agrupados en:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Menciones"
-      },
-      {
-        "key": "B",
-        "text": "Ramas"
-      },
-      {
-        "key": "C",
-        "text": "Familias profesionales"
-      },
-      {
-        "key": "D",
-        "text": "Especializaciones"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 80"
-  },
-  {
-    "id": "q081",
-    "tema": 1,
-    "question": "¿Entre qué siglos se ubica la época Romana?",
-    "options": [
-      {
-        "key": "A",
-        "text": "S. XV-XVIII"
-      },
-      {
-        "key": "B",
-        "text": "S. VI-III a.C"
-      },
-      {
-        "key": "C",
-        "text": "S. II a.C-VI"
-      },
-      {
-        "key": "D",
-        "text": "S. I-V"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 81"
-  },
-  {
-    "id": "q082",
-    "tema": 1,
-    "question": "Según la clasificación cronológica en la asignatura, ¿en qué etapa se creó el Liceo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "En el periodo griego"
-      },
-      {
-        "key": "B",
-        "text": "En el periodo del Imperio Romano"
-      },
-      {
-        "key": "C",
-        "text": "En la Antigüedad"
-      },
-      {
-        "key": "D",
-        "text": "En el periodo árabe"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 82"
-  },
-  {
-    "id": "q083",
-    "tema": 1,
-    "question": "¿Cuáles fueron los avances más notables de los babilonios?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Trabajos relacionados con el teorema de Pitágoras y los triángulos semejantes"
-      },
-      {
-        "key": "B",
-        "text": "Todas las respuestas son correctas"
-      },
-      {
-        "key": "C",
-        "text": "Desarrollan avances en reglas de rectángulos, triángulos rectángulos e isósceles y ciertos trapecios"
-      },
-      {
-        "key": "D",
-        "text": "Desarrollo de rudimentos de medición de ángulos y relaciones trigonométricas"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 83"
-  },
-  {
-    "id": "q084",
-    "tema": 1,
-    "question": "¿De qué palabra procede el término \"matemáticas\"?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Logos"
-      },
-      {
-        "key": "B",
-        "text": "Arithmos"
-      },
-      {
-        "key": "C",
-        "text": "Mathema"
-      },
-      {
-        "key": "D",
-        "text": "Theoria"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 84"
-  },
-  {
-    "id": "q085",
-    "tema": 3,
-    "question": "David Hilbert, en el Congreso de Matemáticas de 1900, propuso una lista de_",
-    "options": [
-      {
-        "key": "A",
-        "text": "21 problemas"
-      },
-      {
-        "key": "B",
-        "text": "7 problemas del milenio"
-      },
-      {
-        "key": "C",
-        "text": "27 problemas"
-      },
-      {
-        "key": "D",
-        "text": "23 problemas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 85"
-  },
-  {
-    "id": "q086",
-    "tema": 1,
-    "question": "¿En qué civilización se hallaron las primeras referencias al número π?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Egipcios"
-      },
-      {
-        "key": "B",
-        "text": "Romanos"
-      },
-      {
-        "key": "C",
-        "text": "Sumerios"
-      },
-      {
-        "key": "D",
-        "text": "Griegos"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 86"
-  },
-  {
-    "id": "q087",
-    "tema": 1,
-    "question": "¿Quiénes calculaban los centros de gravedad de los cuerpos y desarrollaron la astronomía?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Babilonios"
-      },
-      {
-        "key": "B",
-        "text": "Chinos"
-      },
-      {
-        "key": "C",
-        "text": "Alejandrinos"
-      },
-      {
-        "key": "D",
-        "text": "Sumerios"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 87"
-  },
-  {
-    "id": "q089",
-    "tema": 1,
-    "question": "¿De quién es heredado el sistema sexagesimal?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ninguna es correcta"
-      },
-      {
-        "key": "B",
-        "text": "De los babilonios"
-      },
-      {
-        "key": "C",
-        "text": "De los egipcios"
-      },
-      {
-        "key": "D",
-        "text": "De los griegos"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 89"
-  },
-  {
-    "id": "q090",
-    "tema": 1,
-    "question": "Diofanto y Papus, en los siglos II-IV contribuyeron a la aritmética con:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Operaciones con polinomios, ecuaciones lineales y ecuaciones con raíces racionales"
-      },
-      {
-        "key": "B",
-        "text": "Geometría, álgebra y astronomía"
-      },
-      {
-        "key": "C",
-        "text": "Áreas con figuras y volúmenes de cuerpos"
-      },
-      {
-        "key": "D",
-        "text": "Reglas de cálculo"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 90"
-  },
-  {
-    "id": "q092",
-    "tema": 1,
-    "question": "¿Qué consecuencia histórica tuvo el intento de demostrar el V postulado de Euclides?",
-    "options": [
-      {
-        "key": "A",
-        "text": "La aparición de geometrías no euclídeas"
-      },
-      {
-        "key": "B",
-        "text": "La creación del álgebra moderna"
-      },
-      {
-        "key": "C",
-        "text": "La demostración del teorema de Pitágoras"
-      },
-      {
-        "key": "D",
-        "text": "La desaparición de la geometría clásica"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 92"
-  },
-  {
-    "id": "q093",
-    "tema": 1,
-    "question": "¿Cuál no es un avance matemático del siglo XX?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Clasificación de grupos finitos"
-      },
-      {
-        "key": "B",
-        "text": "Las tablas Alfonsinas"
-      },
-      {
-        "key": "C",
-        "text": "Desarrollo de la geometría diferencial"
-      },
-      {
-        "key": "D",
-        "text": "Relevancia de la teoría de Lie"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 93"
-  },
-  {
-    "id": "q094",
-    "tema": 1,
-    "question": "¿Qué matemático creó el primer catálogo de estrellas y la división del día en 24 horas?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Pappus de Alejandría"
-      },
-      {
-        "key": "B",
-        "text": "Arquímedes"
-      },
-      {
-        "key": "C",
-        "text": "Euclides"
-      },
-      {
-        "key": "D",
-        "text": "Hiparco de Nicea"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 94"
-  },
-  {
-    "id": "q095",
-    "tema": 1,
-    "question": "¿En qué siglo comenzó el estudio de las matemáticas puras?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Siglo XIX"
-      },
-      {
-        "key": "B",
-        "text": "Siglo XX"
-      },
-      {
-        "key": "C",
-        "text": "Siglo V"
-      },
-      {
-        "key": "D",
-        "text": "Siglo XV"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 95"
-  },
-  {
-    "id": "q096",
-    "tema": 1,
-    "question": "En la edad media...",
-    "options": [
-      {
-        "key": "A",
-        "text": "Se demuestra de la teoría heliocéntrica de Copérnico."
-      },
-      {
-        "key": "B",
-        "text": "Alonso de Santa Cruz y Antonio de Nebrija establecieron escuelas, academias y bibliotecas en Córdoba, Granada y Sevilla."
-      },
-      {
-        "key": "C",
-        "text": "Se renueva el álgebra con Tartaglia"
-      },
-      {
-        "key": "D",
-        "text": "Fermat inicia la teoría de números."
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 96"
-  },
-  {
-    "id": "q097",
-    "tema": 1,
-    "question": "¿Qué civilización consiguió una aproximación más exacta al número π?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Romanos"
-      },
-      {
-        "key": "B",
-        "text": "Griegos"
-      },
-      {
-        "key": "C",
-        "text": "Sumerios"
-      },
-      {
-        "key": "D",
-        "text": "Egipcios"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 97"
-  },
-  {
-    "id": "q098",
-    "tema": 3,
-    "question": "De los 7 problemas matemáticos del milenio, ¿Cuál se ha resuelto oficialmente?",
-    "options": [
-      {
-        "key": "A",
-        "text": "El problema de P frente a NP"
-      },
-      {
-        "key": "B",
-        "text": "La hipótesis de Riemann"
-      },
-      {
-        "key": "C",
-        "text": "La conjetura de Poincaré"
-      },
-      {
-        "key": "D",
-        "text": "La conjetura de Hodge"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 98"
-  },
-  {
-    "id": "q099",
-    "tema": 1,
-    "question": "¿Qué teorema utiliza líneas paralelas en los triángulos?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Aristóteles"
-      },
-      {
-        "key": "B",
-        "text": "Pitágoras"
-      },
-      {
-        "key": "C",
-        "text": "Aristarco de Samos"
-      },
-      {
-        "key": "D",
-        "text": "Tales"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 99"
-  },
-  {
-    "id": "q100",
-    "tema": 1,
-    "question": "¿Qué matemáticos pertenecen a la época Romana?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Pappus, Hypatia y Diofanato"
-      },
-      {
-        "key": "B",
-        "text": "Leonardo Da vinci, Bernoulli y Heron"
-      },
-      {
-        "key": "C",
-        "text": "Fisher, Cauchy, Riemann y Dirichlet"
-      },
-      {
-        "key": "D",
-        "text": "Ibn Yunus, Khwarizmi, Govindaswami y Nasir al Din al-Tusi"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 100"
-  },
-  {
-    "id": "q102",
-    "tema": 1,
-    "question": "¿Qué dos sistemas de numeración utilizaba el pueblo árabe?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Decimal absoluto y sexagesimal"
-      },
-      {
-        "key": "B",
-        "text": "Octal y decimal"
-      },
-      {
-        "key": "C",
-        "text": "Binario y sexagesimal"
-      },
-      {
-        "key": "D",
-        "text": "Hexadecimal y decimal absoluto"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 102"
-  },
-  {
-    "id": "q104",
-    "tema": 1,
-    "question": "¿Cuándo nació la extensión a decimales del sistema decimal?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Hace unos 1500 años"
-      },
-      {
-        "key": "B",
-        "text": "Hace unos 450 años"
-      },
-      {
-        "key": "C",
-        "text": "Es imposible hacer una datación aproximada"
-      },
-      {
-        "key": "D",
-        "text": "Hace unos 3000 años"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 104"
-  },
-  {
-    "id": "q105",
-    "tema": 1,
-    "question": "Aristóteles fundó la escuela filosófica llamada:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Liceo"
-      },
-      {
-        "key": "B",
-        "text": "Ninguna de las tres"
-      },
-      {
-        "key": "C",
-        "text": "Pitagórica"
-      },
-      {
-        "key": "D",
-        "text": "La Academia"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 105"
-  },
-  {
-    "id": "q107",
-    "tema": 1,
-    "question": "El gran exponente de la cultura matemática del siglo VI a.C. Pitágoras realizó varios trabajos en las matemáticas, ¿cuál no está dentro de su trabajo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Teorema de Pitágoras"
-      },
-      {
-        "key": "B",
-        "text": "Cuadratura del círculo"
-      },
-      {
-        "key": "C",
-        "text": "Creador del álgebra geométrica"
-      },
-      {
-        "key": "D",
-        "text": "Poliedros regulares"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 107"
-  },
-  {
-    "id": "q108",
-    "tema": 1,
-    "question": "¿Cuál es el motivo de la aparición de la academia matemática surgida en España en el S.XVI?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Necesidades bélicas"
-      },
-      {
-        "key": "B",
-        "text": "Trazado de nuevas calzadas"
-      },
-      {
-        "key": "C",
-        "text": "Para contabilizar el oro robado por los políticos de la época"
-      },
-      {
-        "key": "D",
-        "text": "Para ayudar a Newton en el Renacimiento"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 108"
-  },
-  {
-    "id": "q109",
-    "tema": 1,
-    "question": "En el siglo XIX, resurgió de nuevo la geometría con distintos puntos de vista, basados en:",
-    "options": [
-      {
-        "key": "A",
-        "text": "El cálculo diferencial"
-      },
-      {
-        "key": "B",
-        "text": "La astronomía"
-      },
-      {
-        "key": "C",
-        "text": "La métrica"
-      },
-      {
-        "key": "D",
-        "text": "La axiomatización"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 109"
-  },
-  {
-    "id": "q110",
-    "tema": 1,
-    "question": "¿Gracias a qué matemático y astrónomo se incluye el 0 en operaciones con números positivos y negativos en igualdad de condiciones alcanzando la categoría de “número”?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Al Khwarizmi"
-      },
-      {
-        "key": "B",
-        "text": "Platón"
-      },
-      {
-        "key": "C",
-        "text": "Brahmagupta"
-      },
-      {
-        "key": "D",
-        "text": "Arquímedes"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 110"
-  },
-  {
-    "id": "q111",
-    "tema": 1,
-    "question": "¿En dónde se considera que tiene sus orígenes la matemática teórica?",
-    "options": [
-      {
-        "key": "A",
-        "text": "En los documentos matemáticos sumerios"
-      },
-      {
-        "key": "B",
-        "text": "En las escuelas cientificas y filosóficas de la Grecia Clásica"
-      },
-      {
-        "key": "C",
-        "text": "En la necesidad egipcia de calcular áreas de tierras y volúmenes de graneros"
-      },
-      {
-        "key": "D",
-        "text": "En los trabajos de Herón de Alejandría"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 111"
-  },
-  {
-    "id": "q112",
-    "tema": 1,
-    "question": "¿Cómo nace la geometría egipcia?",
-    "options": [
-      {
-        "key": "A",
-        "text": "De la necesidad de medid objetos esféricos"
-      },
-      {
-        "key": "B",
-        "text": "De la necesidad de calcular áreas de tierras, volúmenes de graneros y grandes construcciones"
-      },
-      {
-        "key": "C",
-        "text": "De la necesidad de darle solución a los problemas"
-      },
-      {
-        "key": "D",
-        "text": "De la necesidad de explicar la existencia de Dios"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 112"
-  },
-  {
-    "id": "q113",
-    "tema": 1,
-    "question": "¿Cuál ha sido el logro más destacado a partir del teorema de Pitágoras?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Desarrollo de las matemáticas puras"
-      },
-      {
-        "key": "B",
-        "text": "Resolución de la cuadratura del círculo"
-      },
-      {
-        "key": "C",
-        "text": "Un salto a la abstracción o la generalización"
-      },
-      {
-        "key": "D",
-        "text": "Creación de la escuela pitagórica"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 113"
-  },
-  {
-    "id": "q116",
-    "tema": 1,
-    "question": "¿Qué es un axioma?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Una variable que se usa para resolver ecuaciones diferenciales e integrales"
-      },
-      {
-        "key": "B",
-        "text": "Afirmación que se asume y no tiene por qué ser demostrada"
-      },
-      {
-        "key": "C",
-        "text": "Fibonacci hizo cinco postulados"
-      },
-      {
-        "key": "D",
-        "text": "Afirmación asumida y que ha de ser demostrada"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 116"
-  },
-  {
-    "id": "q117",
-    "tema": 1,
-    "question": "La actual concepción del círculo dividido en 360º es una invención",
-    "options": [
-      {
-        "key": "A",
-        "text": "De los egipcios"
-      },
-      {
-        "key": "B",
-        "text": "De los griegos"
-      },
-      {
-        "key": "C",
-        "text": "De los babilonios"
-      },
-      {
-        "key": "D",
-        "text": "De los sumerios"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 117"
-  },
-  {
-    "id": "q118",
-    "tema": 1,
-    "question": "Hypatia fue la primera mujer matemática ¿En qué época apareció?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Roma"
-      },
-      {
-        "key": "B",
-        "text": "Egipto"
-      },
-      {
-        "key": "C",
-        "text": "Grecia"
-      },
-      {
-        "key": "D",
-        "text": "Mesopotamia"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 118"
-  },
-  {
-    "id": "q119",
-    "tema": 1,
-    "question": "Según el desarrollo histórico de las Matemáticas ¿qué avanza en la segunda mitad del siglo XX?",
-    "options": [
-      {
-        "key": "A",
-        "text": "El álgebra clásica"
-      },
-      {
-        "key": "B",
-        "text": "El desarrollo de las matemáticas mediante técnicas de computación avanzadas"
-      },
-      {
-        "key": "C",
-        "text": "La caída del Imperio Romano"
-      },
-      {
-        "key": "D",
-        "text": "La formalización del método deductivo griego"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 119"
-  },
-  {
-    "id": "q120",
-    "tema": 1,
-    "question": "¿Quién obtuvo un valor de 3 cifras decimales exactas en el número π?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Eratóstenes"
-      },
-      {
-        "key": "B",
-        "text": "Hipatia"
-      },
-      {
-        "key": "C",
-        "text": "Hiparco de Nicea"
-      },
-      {
-        "key": "D",
-        "text": "Platón"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 120"
-  },
-  {
-    "id": "q122",
-    "tema": 1,
-    "question": "¿Quién fue el fundador de la academia de Atenas?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Platón"
-      },
-      {
-        "key": "B",
-        "text": "Sócrates"
-      },
-      {
-        "key": "C",
-        "text": "San Agustín"
-      },
-      {
-        "key": "D",
-        "text": "Aristóteles"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 122"
-  },
-  {
-    "id": "q123",
-    "tema": 1,
-    "question": "¿Quién desarrolló las leyes sobre el movimiento de los planetas en su órbita alrededor del Sol?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Los sabios matemáticos en la época de los señores feudales"
-      },
-      {
-        "key": "B",
-        "text": "Lagrange"
-      },
-      {
-        "key": "C",
-        "text": "Copérnico"
-      },
-      {
-        "key": "D",
-        "text": "Kepler"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 123"
-  },
-  {
-    "id": "q124",
-    "tema": 1,
-    "question": "¿Qué afirma el V postulado de Euclides?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Que todos los ángulos rectos son iguales entre sí"
-      },
-      {
-        "key": "B",
-        "text": "Que si dos rectas forman ángulos internos menores que dos rectos, se cortan del lado de esos ángulos"
-      },
-      {
-        "key": "C",
-        "text": "Que una recta se puede prolongar indefinidamente"
-      },
-      {
-        "key": "D",
-        "text": "Que por un punto exterior a una recta pasan infinitas paralelas"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 124"
-  },
-  {
-    "id": "q125",
-    "tema": 1,
-    "question": "¿Qué evento supone la transición de los números romanos a los números arábigos?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Tablas Alfonsinas"
-      },
-      {
-        "key": "B",
-        "text": "Tablas Trigonométricas"
-      },
-      {
-        "key": "C",
-        "text": "Tablas con logaritmos"
-      },
-      {
-        "key": "D",
-        "text": "Métodos de Képler"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 125"
-  },
-  {
-    "id": "q126",
-    "tema": 1,
-    "question": "Una de las aportaciones fundamentales de Hiparco de Nicea fue:",
-    "options": [
-      {
-        "key": "A",
-        "text": "El establecimiento de funciones trigonométricas básicas (seno, coseno, tangente, secante y cosecante)"
-      },
-      {
-        "key": "B",
-        "text": "Aproximaciones de medidas de ángulos o de longitudes de los lados de los triángulos rectángulos"
-      },
-      {
-        "key": "C",
-        "text": "Construyeron una tabla de cuerdas para resolver triángulos"
-      },
-      {
-        "key": "D",
-        "text": "Establecieron la medida de los ángulos en grados, minutos y segundo"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 126"
-  },
-  {
-    "id": "q127",
-    "tema": 1,
-    "question": "¿En qué momento aparece la estadística a través del cálculo de probabilidad?",
-    "options": [
-      {
-        "key": "A",
-        "text": "En la Edad Media"
-      },
-      {
-        "key": "B",
-        "text": "En el periodo griego"
-      },
-      {
-        "key": "C",
-        "text": "En el Renacimiento"
-      },
-      {
-        "key": "D",
-        "text": "Con la matemática moderna (s.XIX y XX)"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 127"
-  },
-  {
-    "id": "q128",
-    "tema": 1,
-    "question": "¿Quién trabajó la teoría de números?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Barrow"
-      },
-      {
-        "key": "B",
-        "text": "Fermat"
-      },
-      {
-        "key": "C",
-        "text": "Napier"
-      },
-      {
-        "key": "D",
-        "text": "Fourier"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 128"
-  },
-  {
-    "id": "q129",
-    "tema": 1,
-    "question": "¿Cuándo aparecieron las primeras universidades en Europa?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Siglo XV"
-      },
-      {
-        "key": "B",
-        "text": "Siglo XII"
-      },
-      {
-        "key": "C",
-        "text": "Siglo XIV"
-      },
-      {
-        "key": "D",
-        "text": "Siglo XVII"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 129"
-  },
-  {
-    "id": "q130",
-    "tema": 1,
-    "question": "¿En qué dos escuelas se divide la Grecia Antigua?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Escuela platónica o formalista y escuela de Alejandría"
-      },
-      {
-        "key": "B",
-        "text": "Escuela aristotélica y escuela platónica"
-      },
-      {
-        "key": "C",
-        "text": "Escuela pitagórica y escuela platónica"
-      },
-      {
-        "key": "D",
-        "text": "Escuela hindú y escuela platónica"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 130"
-  },
-  {
-    "id": "q133",
-    "tema": 3,
-    "question": "Según Polya, el primer paso en la resolución de problemas es:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Comprobar los resultados"
-      },
-      {
-        "key": "B",
-        "text": "Ejecutar el plan"
-      },
-      {
-        "key": "C",
-        "text": "Entender el problema"
-      },
-      {
-        "key": "D",
-        "text": "Simplificar los datos"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 133"
-  },
-  {
-    "id": "q134",
-    "tema": 3,
-    "question": "¿Cómo se evalúa la adquisición de competencias clave?",
-    "options": [
-      {
-        "key": "A",
-        "text": "A través de los criterios de evaluación"
-      },
-      {
-        "key": "B",
-        "text": "A través de los saberes básicos"
-      },
-      {
-        "key": "C",
-        "text": "A través de los descriptores de salida"
-      },
-      {
-        "key": "D",
-        "text": "Las competencias especificas no se evalúan"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 134"
-  },
-  {
-    "id": "q135",
-    "tema": 2,
-    "question": "Si hablamos de la impartición de Módulos, estamos hablando de:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Educación Secundaria Obligatoria (ESO)"
-      },
-      {
-        "key": "B",
-        "text": "Primaria"
-      },
-      {
-        "key": "C",
-        "text": "Bachillerato"
-      },
-      {
-        "key": "D",
-        "text": "Formación Profesional (FP)"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 135"
-  },
-  {
-    "id": "q136",
-    "tema": 2,
-    "question": "El título de FP de Grado Básico permite promocionar directamente a...",
-    "options": [
-      {
-        "key": "A",
-        "text": "un Postgrado"
-      },
-      {
-        "key": "B",
-        "text": "un Ciclo Formativo de Grado Superior"
-      },
-      {
-        "key": "C",
-        "text": "un Grado Universitario"
-      },
-      {
-        "key": "D",
-        "text": "un Ciclo Formativo de Grado Medio"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 136"
-  },
-  {
-    "id": "q137",
-    "tema": 2,
-    "question": "Los ciclos formativos se crean a partir de...",
-    "options": [
-      {
-        "key": "A",
-        "text": "los sindicatos"
-      },
-      {
-        "key": "B",
-        "text": "las competencias resilientes"
-      },
-      {
-        "key": "C",
-        "text": "la diputación"
-      },
-      {
-        "key": "D",
-        "text": "las cualificaciones profesionales"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 137"
-  },
-  {
-    "id": "q138",
-    "tema": 2,
-    "question": "¿A qué hace referencia la competencia lingüística?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Implica el uso seguro y crítico de las TIC"
-      },
-      {
-        "key": "B",
-        "text": "Implica la capacidad de reflexionar sobre uno mismo para autoconocerse, aceptarse y promover un crecimiento personal constante"
-      },
-      {
-        "key": "C",
-        "text": "A las capacidades para aplicar el razonamiento matemático para resolver cuestiones de la vida cotidiana"
-      },
-      {
-        "key": "D",
-        "text": "A la habilidad para utilizar la lengua"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 138"
-  },
-  {
-    "id": "q139",
-    "tema": 2,
-    "question": "En la familia profesional de “Informática y Comunicaciones” tenemos ciclos formativos de…",
-    "options": [
-      {
-        "key": "A",
-        "text": "Únicamente de Grado Medio y Superior"
-      },
-      {
-        "key": "B",
-        "text": "No existe esa familia profesional"
-      },
-      {
-        "key": "C",
-        "text": "Los ciclos formativos relacionados con la informática se encuentran en la familia “Servicios Socioculturales y a la Comunidad”"
-      },
-      {
-        "key": "D",
-        "text": "Grado Básico, de Grado Medio y de Grado Superior"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 139"
-  },
-  {
-    "id": "q140",
-    "tema": 2,
-    "question": "En cuanto a la oferta formativa de grado E en la nueva FP de la LOMLOE...",
-    "options": [
-      {
-        "key": "A",
-        "text": "está formada por los ciclos de especialización"
-      },
-      {
-        "key": "B",
-        "text": "está formada por la FP básica y los ciclos de especialización"
-      },
-      {
-        "key": "C",
-        "text": "está formada por la FP básica"
-      },
-      {
-        "key": "D",
-        "text": "está formada por los Ciclos Formativos de grado medido y de grado superior"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 140"
-  },
-  {
-    "id": "q141",
-    "tema": 3,
-    "question": "Señala la afirmación correcta con respecto a la LOMLOE",
-    "options": [
-      {
-        "key": "A",
-        "text": "Matemáticas en la ESO tiene 15 competencias específicas que se relacionan con las 6 competencias clave a partir de descriptores orientativos"
-      },
-      {
-        "key": "B",
-        "text": "Matemáticas en la ESO tiene 15 competencias específicas que se relacionan con las 10 competencias clave a partir de descriptores orientativos"
-      },
-      {
-        "key": "C",
-        "text": "Matemáticas en la ESO tiene 10 competencias específicas que se relacionan con las 8 competencias clave a partir de descriptores operativos"
-      },
-      {
-        "key": "D",
-        "text": "Matemáticas en la ESO tiene 10 competencias específicas que se relacionan con las 8 competencias clave a partir de descriptores relativos"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 141"
-  },
-  {
-    "id": "q142",
-    "tema": 3,
-    "question": "¿Qué afirmación corresponde al Machine Learning?",
-    "options": [
-      {
-        "key": "A",
-        "text": "La teoría de las catástrofes considera el mundo estable pero sujeto a cambios súbitos e imprevistos"
-      },
-      {
-        "key": "B",
-        "text": "Aplicaciones matemáticas aplicadas a la forma de organizar y plantear la estructura logística de una planta industrial o de transporte"
-      },
-      {
-        "key": "C",
-        "text": "Modelos analíticos para la resolución de problemas que permitan a las organizaciones tomar las mejores decisiones"
-      },
-      {
-        "key": "D",
-        "text": "Aplicación de la inteligencia artificial a los asistentes virtuales en diferentes campos como medicina, telefonía, compañías aéreas, entidades bancarias, empresas aseguradoras, etc."
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 142"
-  },
-  {
-    "id": "q143",
-    "tema": 3,
-    "question": "¿Cuál no es un tipo de evaluación en la planificación del proceso educativo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Sumativa"
-      },
-      {
-        "key": "B",
-        "text": "Inicial"
-      },
-      {
-        "key": "C",
-        "text": "Continua"
-      },
-      {
-        "key": "D",
-        "text": "Final"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 143"
-  },
-  {
-    "id": "q144",
-    "tema": 3,
-    "question": "¿Cuál es la definición del concepto de matematización?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Convertir todos los datos del problema en una tabla y hacer operaciones con ellos sin interpretarlos"
-      },
-      {
-        "key": "B",
-        "text": "Resolver el problema por intuición y comprobar al final si el resultado \"parece razonable\""
-      },
-      {
-        "key": "C",
-        "text": "Organizar y estructurar la información que aparece en un problema, identificar los aspectos matemáticos relevantes, descubrir regularidades, relaciones y estructuras"
-      },
-      {
-        "key": "D",
-        "text": "Aplicar una fórmula conocida directamente a los datos del enunciado sin analizar el problema"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 144"
-  },
-  {
-    "id": "q145",
-    "tema": 3,
-    "question": "Los contenidos pueden ser:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Actitudinales"
-      },
-      {
-        "key": "B",
-        "text": "Procedimentales"
-      },
-      {
-        "key": "C",
-        "text": "Todas las respuestas son correctas"
-      },
-      {
-        "key": "D",
-        "text": "Conceptuales"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 145"
-  },
-  {
-    "id": "q146",
-    "tema": 3,
-    "question": "Para realizar las adaptaciones curriculares es necesario:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Disponer de material adecuado"
-      },
-      {
-        "key": "B",
-        "text": "Todas son correctas"
-      },
-      {
-        "key": "C",
-        "text": "Considerar tareas de refuerzo y de profundización"
-      },
-      {
-        "key": "D",
-        "text": "Fomentar el trabajo en grupo"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 146"
-  },
-  {
-    "id": "q147",
-    "tema": 3,
-    "question": "Di cuál es la afirmación correcta",
-    "options": [
-      {
-        "key": "A",
-        "text": "Cada competencia clave tiene un único descriptor de salida"
-      },
-      {
-        "key": "B",
-        "text": "Cada competencia clave tiene una serie de descriptores de salida"
-      },
-      {
-        "key": "C",
-        "text": "Cada competencia específica tiene una serie de descriptores de salida"
-      },
-      {
-        "key": "D",
-        "text": "Todas son correctas"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 147"
-  },
-  {
-    "id": "q148",
-    "tema": 1,
-    "question": "¿Qué avances hubo en la Edad Moderna?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Teoría de números"
-      },
-      {
-        "key": "B",
-        "text": "Análisis infinitesimal"
-      },
-      {
-        "key": "C",
-        "text": "Series y convergencias"
-      },
-      {
-        "key": "D",
-        "text": "Todas son correctas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 148"
-  },
-  {
-    "id": "q149",
-    "tema": 1,
-    "question": "¿Cómo define la RAE a las matemáticas?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ciencia deductiva que estudia las propiedades de los entes abstractos, como números, figuras geométricas o símbolos, y sus relaciones."
-      },
-      {
-        "key": "B",
-        "text": "Ciencia inductiva que estudia las propiedades de los entes abstractos, como números, figuras geométricas o símbolos, y sus relaciones."
-      },
-      {
-        "key": "C",
-        "text": "Ciencia deductiva que estudia las propiedades de los entes concretos, como números, figuras geométricas o símbolos, y sus relaciones."
-      },
-      {
-        "key": "D",
-        "text": "Ciencia deductiva que estudia las propiedades de los entes abstractos, como cifras, letras, dibujos, y sus relaciones."
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 149"
-  },
-  {
-    "id": "q150",
-    "tema": 1,
-    "question": "Las aportaciones matemáticas fundamentales del pueblo árabe fueron:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Funciones trigonométricas básicas, Teorema del seno y tablas trigonométricas de elevada precisión mediante interpolación"
-      },
-      {
-        "key": "B",
-        "text": "Operaciones con polinomios y ecuaciones lineales"
-      },
-      {
-        "key": "C",
-        "text": "Teoría heliocéntrica"
-      },
-      {
-        "key": "D",
-        "text": "Cálculo vectorial, cálculo tensorial y la notación vectorial de números complejos"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 150"
-  },
-  {
-    "id": "q151",
-    "tema": 1,
-    "question": "El sistema decimal absoluto por quién fue difundido en Europa:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Fibonacci"
-      },
-      {
-        "key": "B",
-        "text": "Copérnico"
-      },
-      {
-        "key": "C",
-        "text": "Brahmagupta"
-      },
-      {
-        "key": "D",
-        "text": "Khwarizmi"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 151"
-  },
-  {
-    "id": "q152",
-    "tema": 3,
-    "question": "¿Cómo se denomina el informe que compara la calidad de la enseñanza con otras referencias internacionales?",
-    "options": [
-      {
-        "key": "A",
-        "text": "PISA"
-      },
-      {
-        "key": "B",
-        "text": "POSA"
-      },
-      {
-        "key": "C",
-        "text": "PITISA"
-      },
-      {
-        "key": "D",
-        "text": "PINSA"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 152"
-  },
-  {
-    "id": "q153",
-    "tema": 2,
-    "question": "¿Cómo se denomina la ley de educación actual?",
-    "options": [
-      {
-        "key": "A",
-        "text": "LOE"
-      },
-      {
-        "key": "B",
-        "text": "LOMCE"
-      },
-      {
-        "key": "C",
-        "text": "LODE"
-      },
-      {
-        "key": "D",
-        "text": "LOMLOE"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 153"
-  },
-  {
-    "id": "q154",
-    "tema": 2,
-    "question": "¿Cuántos niveles de concreción curricular hay en el Estado español?",
-    "options": [
-      {
-        "key": "A",
-        "text": "3"
-      },
-      {
-        "key": "B",
-        "text": "4"
-      },
-      {
-        "key": "C",
-        "text": "5"
-      },
-      {
-        "key": "D",
-        "text": "6"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 154"
-  },
-  {
-    "id": "q155",
-    "tema": 2,
-    "question": "¿A quién corresponde la labor de trabajar por integrar los saberes con los contenidos y el trabajo en el aula?",
-    "options": [
-      {
-        "key": "A",
-        "text": "A los profesores"
-      },
-      {
-        "key": "B",
-        "text": "A los ayuntamientos"
-      },
-      {
-        "key": "C",
-        "text": "A los profesores y a las familias"
-      },
-      {
-        "key": "D",
-        "text": "A los delegados de educación de cada Comunidad Autónoma"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 155"
-  },
-  {
-    "id": "q156",
-    "tema": 2,
-    "question": "Cuál de los siguientes agentes NO forma parte de los cuatro niveles de ordenación curricular:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Los Ayuntamientos"
-      },
-      {
-        "key": "B",
-        "text": "El gobierno de España"
-      },
-      {
-        "key": "C",
-        "text": "Las Comunidades Autónomas"
-      },
-      {
-        "key": "D",
-        "text": "Los profesores"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 156"
-  },
-  {
-    "id": "q157",
-    "tema": 3,
-    "question": "¿Etapa desarrollan contenidos/metodología/evaluación?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ejecución"
-      },
-      {
-        "key": "B",
-        "text": "Planificación"
-      },
-      {
-        "key": "C",
-        "text": "Comunicativa"
-      },
-      {
-        "key": "D",
-        "text": "Evaluación"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 157"
-  },
-  {
-    "id": "q158",
-    "tema": 3,
-    "question": "¿Cuál NO premio categoría Matemáticas?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Premio Nobel"
-      },
-      {
-        "key": "B",
-        "text": "Medalla Fields"
-      },
-      {
-        "key": "C",
-        "text": "Premios Abel"
-      },
-      {
-        "key": "D",
-        "text": "Todos tienen categoría matemáticas"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 158"
-  },
-  {
-    "id": "q159",
-    "tema": 3,
-    "question": "¿Qué es Big Data?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Asistente virtual"
-      },
-      {
-        "key": "B",
-        "text": "App logística"
-      },
-      {
-        "key": "C",
-        "text": "Modelo analítico"
-      },
-      {
-        "key": "D",
-        "text": "Análisis masivo datos"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 159"
-  },
-  {
-    "id": "q160",
-    "tema": 1,
-    "question": "El ser humano ha creado y desarrollado herramientas Matemáticas como parte de una necesidad por dominar:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Su vida"
-      },
-      {
-        "key": "B",
-        "text": "A otros pueblos"
-      },
-      {
-        "key": "C",
-        "text": "El universo"
-      },
-      {
-        "key": "D",
-        "text": "Su entorno"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 160"
-  },
-  {
-    "id": "q161",
-    "tema": 3,
-    "question": "¿Debido a qué surge la necesidad de reformular la enseñanza en Matemáticas?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Por estar mal planteada."
-      },
-      {
-        "key": "B",
-        "text": "Por ser tan interesante."
-      },
-      {
-        "key": "C",
-        "text": "Tasa de fracaso."
-      },
-      {
-        "key": "D",
-        "text": "Todas son correctas."
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 161"
-  },
-  {
-    "id": "q162",
-    "tema": 2,
-    "question": "¿Bajo qué corriente el alumno aprende a través de su propia acción en situaciones planteadas por el docente?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Corriente constructivista."
-      },
-      {
-        "key": "B",
-        "text": "Corriente empirista."
-      },
-      {
-        "key": "C",
-        "text": "Corriente conductista."
-      },
-      {
-        "key": "D",
-        "text": "Corriente conectiva."
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 162"
-  },
-  {
-    "id": "q163",
-    "tema": 3,
-    "question": "Cuál de los siguientes no se considera un avance actual en matemáticas:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Big data"
-      },
-      {
-        "key": "B",
-        "text": "Trigonometría"
-      },
-      {
-        "key": "C",
-        "text": "Topología"
-      },
-      {
-        "key": "D",
-        "text": "Machine Learning"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 163"
-  },
-  {
-    "id": "q164",
-    "tema": 3,
-    "question": "Existe la sensación en docentes del cuerpo universitario de que el nivel en los nuevos alumnos en los últimos años en algunos campos de las Matemáticas:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Es mucho mejor que nunca"
-      },
-      {
-        "key": "B",
-        "text": "Se ha visto aumentado"
-      },
-      {
-        "key": "C",
-        "text": "Ha descendido"
-      },
-      {
-        "key": "D",
-        "text": "Depende de a quién le preguntes"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 164"
-  },
-  {
-    "id": "q165",
-    "tema": 3,
-    "question": "¿Cuáles son las etapas del proceso enseñanza-aprendizaje?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Planificación y evaluación"
-      },
-      {
-        "key": "B",
-        "text": "Planificación, ejecución y evaluación"
-      },
-      {
-        "key": "C",
-        "text": "Planificación, ejecución, concreción y evaluación"
-      },
-      {
-        "key": "D",
-        "text": "Todas son correctas"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 165"
-  },
-  {
-    "id": "q166",
-    "tema": 3,
-    "question": "Las situaciones de aprendizaje en la LOMLOE se caracterizan por:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ser ejercicios aislados"
-      },
-      {
-        "key": "B",
-        "text": "Centrarse solo en contenidos"
-      },
-      {
-        "key": "C",
-        "text": "Integrar competencias, saberes y criterios"
-      },
-      {
-        "key": "D",
-        "text": "Usarse únicamente en evaluación final"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 166"
-  },
-  {
-    "id": "q167",
-    "tema": 3,
-    "question": "En la LOMLOE, las competencias específicas de Matemáticas:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Son iguales que para el resto de las materias"
-      },
-      {
-        "key": "B",
-        "text": "Sustituyen a los contenidos"
-      },
-      {
-        "key": "C",
-        "text": "Concretan cómo la materia contribuye a las competencias clave"
-      },
-      {
-        "key": "D",
-        "text": "Solo se evalúan al final de la etapa"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 167"
-  },
-  {
-    "id": "q168",
-    "tema": 3,
-    "question": "¿Qué relación existe entre criterios de evaluación y competencias específicas?",
-    "options": [
-      {
-        "key": "A",
-        "text": "No tienen relación"
-      },
-      {
-        "key": "B",
-        "text": "Los criterios evalúan el grado de adquisición de las competencias específicas"
-      },
-      {
-        "key": "C",
-        "text": "Los criterios sustituyen a las competencias"
-      },
-      {
-        "key": "D",
-        "text": "Las competencias dependen de los criterios"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 168"
-  },
-  {
-    "id": "q170",
-    "tema": 3,
-    "question": "Las competencias clave en Matemáticas:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Se desarrollan de forma transversal"
-      },
-      {
-        "key": "B",
-        "text": "Son exclusivas de la ESO"
-      },
-      {
-        "key": "C",
-        "text": "Se trabajan solo en esta materia"
-      },
-      {
-        "key": "D",
-        "text": "No se evalúan"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 170"
-  },
-  {
-    "id": "q172",
-    "tema": 2,
-    "question": "¿Cuántos sentidos recoge la LOMLOE?",
-    "options": [
-      {
-        "key": "A",
-        "text": "6"
-      },
-      {
-        "key": "B",
-        "text": "10"
-      },
-      {
-        "key": "C",
-        "text": "17"
-      },
-      {
-        "key": "D",
-        "text": "20"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 172"
-  },
-  {
-    "id": "q173",
-    "tema": 3,
-    "question": "¿Qué finalidad tienen los Objetivos de Desarrollo Sostenible (ODS) en el ámbito educativo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Sustituir el currículo oficial"
-      },
-      {
-        "key": "B",
-        "text": "Promover una educación memorística"
-      },
-      {
-        "key": "C",
-        "text": "Limitar la autonomía de los centros"
-      },
-      {
-        "key": "D",
-        "text": "Fomentar una educación orientada al desarrollo sostenible y la ciudadanía global"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 173"
-  },
-  {
-    "id": "q174",
-    "tema": 3,
-    "question": "¿Qué ODS está directamente relacionado con la educación de calidad?",
-    "options": [
-      {
-        "key": "A",
-        "text": "ODS 4"
-      },
-      {
-        "key": "B",
-        "text": "ODS 5"
-      },
-      {
-        "key": "C",
-        "text": "ODS 10"
-      },
-      {
-        "key": "D",
-        "text": "ODS 13"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 174"
-  },
-  {
-    "id": "q177",
-    "tema": 1,
-    "question": "¿Qué civilización carecía de un símbolo para el cero?",
-    "options": [
-      {
-        "key": "A",
-        "text": "India"
-      },
-      {
-        "key": "B",
-        "text": "Romana"
-      },
-      {
-        "key": "C",
-        "text": "Árabe"
-      },
-      {
-        "key": "D",
-        "text": "Maya"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 177"
-  },
-  {
-    "id": "q178",
-    "tema": 1,
-    "question": "¿Qué obra matemática influyó durante siglos en la enseñanza de la geometría?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Papiro de Rhind"
-      },
-      {
-        "key": "B",
-        "text": "Los Elementos"
-      },
-      {
-        "key": "C",
-        "text": "La Tablilla Plimpton 322"
-      },
-      {
-        "key": "D",
-        "text": "La Odisea"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 178"
-  },
-  {
-    "id": "q179",
-    "tema": 1,
-    "question": "¿Qué civilización desarrolló una matemática principalmente práctica, sin demostraciones formales?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Griega"
-      },
-      {
-        "key": "B",
-        "text": "Egipcia"
-      },
-      {
-        "key": "C",
-        "text": "India"
-      },
-      {
-        "key": "D",
-        "text": "China"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 179"
-  },
-  {
-    "id": "q180",
-    "tema": 3,
-    "question": "Los objetivos de desarrollo sostenible comprendían",
-    "options": [
-      {
-        "key": "A",
-        "text": "7 objetivos, 21 indicadores"
-      },
-      {
-        "key": "B",
-        "text": "9 objetivos, 21 metas"
-      },
-      {
-        "key": "C",
-        "text": "8 objetivos, 169 metas"
-      },
-      {
-        "key": "D",
-        "text": "17 objetivos, 169 metas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 180"
-  },
-  {
-    "id": "q181",
-    "tema": 2,
-    "question": "¿Qué afirmación es la correcta?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Las competencias específicas aparecen en la LOMLOE"
-      },
-      {
-        "key": "B",
-        "text": "Las competencias específicas aparecen en la LOMLOE y en la LOMCE"
-      },
-      {
-        "key": "C",
-        "text": "Las competencias específicas aparecen en la LOMCE"
-      },
-      {
-        "key": "D",
-        "text": "Las competencias específicas aparecen en la FP de Grado Medio"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 181"
-  },
-  {
-    "id": "q182",
-    "tema": 2,
-    "question": "Matemáticas es una materia troncal y obligatoria:",
-    "options": [
-      {
-        "key": "A",
-        "text": "En el primer ciclo de Educación Secundaria"
-      },
-      {
-        "key": "B",
-        "text": "En todos los ciclos de Formación Profesional"
-      },
-      {
-        "key": "C",
-        "text": "En todos los cursos de Educación Secundaria y Bachillerato"
-      },
-      {
-        "key": "D",
-        "text": "En todos los cursos de Educación Secundaria y en algunas modalidades de Bachillerato"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 182"
-  },
-  {
-    "id": "q183",
-    "tema": 2,
-    "question": "¿Qué dos corrientes se contraponen para explicar los procesos de aprendizajes y enseñanza dentro del ámbito escolar?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Corriente empírica y conductista"
-      },
-      {
-        "key": "B",
-        "text": "Corriente empírica y constructivista"
-      },
-      {
-        "key": "C",
-        "text": "Corriente empírica y cognitivista"
-      },
-      {
-        "key": "D",
-        "text": "Corriente empírica y estructuralista"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 183"
-  },
-  {
-    "id": "q191",
-    "tema": 2,
-    "question": "Los cuatro niveles de ordenación curricular son:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Estructuralismo, mecanicismo, empirismo y realista"
-      },
-      {
-        "key": "B",
-        "text": "El Estado, las Comunidades Autónomas, los Centros educativos y los profesores"
-      },
-      {
-        "key": "C",
-        "text": "El profesorado, el jefe de departamento, el jefe de estudios e Inspección educativa"
-      },
-      {
-        "key": "D",
-        "text": "Los objetivos, los contenidos, los criterios de evaluación y los estándares de aprendizaje"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 2 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 9 · página 2"
-  },
-  {
-    "id": "q193",
-    "tema": 2,
-    "question": "Las matemáticas orientadas a las Enseñanzas Aplicadas están orientadas a conseguir las competencias necesarias para estudiar:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Bachillerato"
-      },
-      {
-        "key": "B",
-        "text": "FP"
-      },
-      {
-        "key": "C",
-        "text": "Bachillerato en modalidad de Humanidades y Ciencias Sociales"
-      },
-      {
-        "key": "D",
-        "text": "FP y Bachillerato en modalidad de Humanidades y Ciencias Sociales"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "TXT adicional",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 11 · página 2"
-  },
-  {
-    "id": "q194",
-    "tema": 3,
-    "question": "El mecanicismo:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Enseña las matemáticas como un sistema bien estructurado"
-      },
-      {
-        "key": "B",
-        "text": "Es un conjunto de reglas que los alumnos deben aprender y aplicar a problemas que son similares a los ejemplos previos"
-      },
-      {
-        "key": "C",
-        "text": "Tiene como punto de partida la realidad cercana al alumno. Se adquieren experiencias y contenidos útiles, pero el aprendizaje carece de profundización y sistematización"
-      },
-      {
-        "key": "D",
-        "text": "Parte de la realidad, pero profundiza y sistematiza los aprendizajes"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 2 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 12 · página 2"
-  },
-  {
-    "id": "q195",
-    "tema": 3,
-    "question": "¿Quién se encarga de que exista una coordinación entre las programaciones de los diferentes departamentos?",
-    "options": [
-      {
-        "key": "A",
-        "text": "El jefe de estudios"
-      },
-      {
-        "key": "B",
-        "text": "El Estado"
-      },
-      {
-        "key": "C",
-        "text": "La COCOPE"
-      },
-      {
-        "key": "D",
-        "text": "La PGA"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 2 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 13 · página 2"
-  },
-  {
-    "id": "q196",
-    "tema": 3,
-    "question": "La programación didáctica deberá incluirse en la PGA:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Antes de que acabe el curso presente"
-      },
-      {
-        "key": "B",
-        "text": "Antes de empezar el curso presente"
-      },
-      {
-        "key": "C",
-        "text": "Antes del 30 de septiembre del curso presente"
-      },
-      {
-        "key": "D",
-        "text": "Antes del 31 de diciembre del curso presente"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 14 · página 3"
-  },
-  {
-    "id": "q197",
-    "tema": 2,
-    "question": "Los contenidos comunes, estándares de aprendizaje evaluables y horario lectivo mínimo se establecen por:",
-    "options": [
-      {
-        "key": "A",
-        "text": "El Estado"
-      },
-      {
-        "key": "B",
-        "text": "La Comunidad Autónoma"
-      },
-      {
-        "key": "C",
-        "text": "El centro educativo"
-      },
-      {
-        "key": "D",
-        "text": "El profesorado"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 16 · página 3"
-  },
-  {
-    "id": "q198",
-    "tema": 2,
-    "question": "Los contenidos de las materias específicas los determina:",
-    "options": [
-      {
-        "key": "A",
-        "text": "El Estado"
-      },
-      {
-        "key": "B",
-        "text": "La Comunidad Autónoma"
-      },
-      {
-        "key": "C",
-        "text": "El centro educativo"
-      },
-      {
-        "key": "D",
-        "text": "El profesorado"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 17 · página 3"
-  },
-  {
-    "id": "q199",
-    "tema": 2,
-    "question": "El diseño curricular de las materias de libre configuración autonómica es competencia de:",
-    "options": [
-      {
-        "key": "A",
-        "text": "El Estado"
-      },
-      {
-        "key": "B",
-        "text": "La Comunidad Autónoma"
-      },
-      {
-        "key": "C",
-        "text": "El centro educativo"
-      },
-      {
-        "key": "D",
-        "text": "El profesorado"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 18 · página 3"
-  },
-  {
-    "id": "q200",
-    "tema": 2,
-    "question": "La cantidad de sesiones que tendrá cada materia a lo largo de cada curso vendrá fijada por:",
-    "options": [
-      {
-        "key": "A",
-        "text": "El Estado"
-      },
-      {
-        "key": "B",
-        "text": "La Comunidad Autónoma"
-      },
-      {
-        "key": "C",
-        "text": "El centro educativo"
-      },
-      {
-        "key": "D",
-        "text": "El profesorado"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "TXT adicional",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 19 · página 3"
-  },
-  {
-    "id": "q201",
-    "tema": 3,
-    "question": "La programación:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Mejora la capacidad de concentración y de atención"
-      },
-      {
-        "key": "B",
-        "text": "Genera una mayor autonomía y un mayor interés por la experimentación y el aprendizaje"
-      },
-      {
-        "key": "C",
-        "text": "Eleva la capacidad de lógica y cálculo"
-      },
-      {
-        "key": "D",
-        "text": "Todas son correctas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "TXT adicional",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 20 · página 3"
-  },
-  {
-    "id": "q203",
-    "tema": 2,
-    "question": "A qué competencia clave hace referencia la siguiente definición; “Hacen referencia a las capacidades para relacionarse con las personas y participar de manera activa, participativa y democrática en la vida social y cívica”:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Competencias sociales y cívicas"
-      },
-      {
-        "key": "B",
-        "text": "Sentido de la iniciativa y espíritu emprendedor"
-      },
-      {
-        "key": "C",
-        "text": "Aprender a aprender"
-      },
-      {
-        "key": "D",
-        "text": "Conciencia y expresiones culturales"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 4 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 22 · página 4"
-  },
-  {
-    "id": "q205",
-    "tema": 2,
-    "question": "¿Cómo define la legislación actual, LOMLOE, las competencias?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Competencias básicas"
-      },
-      {
-        "key": "B",
-        "text": "Competencias educativas"
-      },
-      {
-        "key": "C",
-        "text": "Competencias clave"
-      },
-      {
-        "key": "D",
-        "text": "Competencias determinantes"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 4 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 24 · página 4"
-  },
-  {
-    "id": "q206",
-    "tema": 3,
-    "question": "En el enfoque realista de enseñanza de las matemáticas, ¿qué tipo de matematización se utiliza?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Matematización vertical"
-      },
-      {
-        "key": "B",
-        "text": "Escasa matematización"
-      },
-      {
-        "key": "C",
-        "text": "Matematización horizontal"
-      },
-      {
-        "key": "D",
-        "text": "Matematización horizontal y ligeramente vertical"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 4 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 25 · página 4"
-  },
-  {
-    "id": "q207",
-    "tema": 3,
-    "question": "¿Qué tipo de matematización se da en el mecanicismo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Vertical"
-      },
-      {
-        "key": "B",
-        "text": "Horizontal"
-      },
-      {
-        "key": "C",
-        "text": "Ninguna, ya que tiene escasa matematización"
-      },
-      {
-        "key": "D",
-        "text": "Las opciones a y b son correctas"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 5 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 26 · página 5"
-  },
-  {
-    "id": "q208",
-    "tema": 2,
-    "question": "(LOMCE) En 3º de ESO el alumno puede elegir entre:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Matemáticas orientadas a las enseñanzas académicas y matemáticas orientadas a las enseñanzas aplicadas"
-      },
-      {
-        "key": "B",
-        "text": "Matemáticas académicas y matemáticas orientadas"
-      },
-      {
-        "key": "C",
-        "text": "En 3º de ESO no tienen opción de elegir las matemáticas"
-      },
-      {
-        "key": "D",
-        "text": "Matemáticas I y II"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 5 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 27 · página 5"
-  },
-  {
-    "id": "q210",
-    "tema": 2,
-    "question": "¿Cuál de las siguientes no es una competencia clave?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Comunicación lingüística"
-      },
-      {
-        "key": "B",
-        "text": "Competencia artística"
-      },
-      {
-        "key": "C",
-        "text": "Competencia digital"
-      },
-      {
-        "key": "D",
-        "text": "Aprender a aprender"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 5 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 29 · página 5"
-  },
-  {
-    "id": "q211",
-    "tema": 2,
-    "question": "¿Qué nivel de ordenación curricular es el responsable de concretar el currículo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "El Estado"
-      },
-      {
-        "key": "B",
-        "text": "Las Comunidades Autónomas"
-      },
-      {
-        "key": "C",
-        "text": "El centro educativo"
-      },
-      {
-        "key": "D",
-        "text": "El profesorado"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 32 · página 6"
-  },
-  {
-    "id": "q215",
-    "tema": 3,
-    "question": "¿Cuándo se aceptó el fracaso de la nueva matemática?",
-    "options": [
-      {
-        "key": "A",
-        "text": "En los años 60"
-      },
-      {
-        "key": "B",
-        "text": "A finales de los años 50 y principios de los 60"
-      },
-      {
-        "key": "C",
-        "text": "En los años 70"
-      },
-      {
-        "key": "D",
-        "text": "A finales de los años 60 y principios de los 70"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 36 · página 6"
-  },
-  {
-    "id": "q216",
-    "tema": 2,
-    "question": "¿Qué significa COCOPE?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Comisión de Coordinación Pedagógica"
-      },
-      {
-        "key": "B",
-        "text": "Consejo de Coordinación Pedagógica"
-      },
-      {
-        "key": "C",
-        "text": "Consejo de Cooperación Pedagógica"
-      },
-      {
-        "key": "D",
-        "text": "Comisión de Cooperación Pedagógica"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 37 · página 6"
-  },
-  {
-    "id": "q218",
-    "tema": 2,
-    "question": "¿Qué significa la sigla LOMLOE?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ley Orgánica de Mayor Calidad Educativa"
-      },
-      {
-        "key": "B",
-        "text": "Ley Orgánica de Mejora de la Calidad de Enseñanza"
-      },
-      {
-        "key": "C",
-        "text": "Ley Orgánica de Mejora de la Calidad Educativa"
-      },
-      {
-        "key": "D",
-        "text": "Ley Orgánica de Modificación de la Ley Orgánica de Educación"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 7 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 39 · página 7"
-  },
-  {
-    "id": "q220",
-    "tema": 3,
-    "question": "El estilo de enseñanza matemática que considera las matemáticas como una ciencia lógico-deductiva es:",
-    "options": [
-      {
-        "key": "A",
-        "text": "El mecanicismo"
-      },
-      {
-        "key": "B",
-        "text": "El estructuralismo"
-      },
-      {
-        "key": "C",
-        "text": "El empirismo"
-      },
-      {
-        "key": "D",
-        "text": "El estilo realista"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 7 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 41 · página 7"
-  },
-  {
-    "id": "q221",
-    "tema": 3,
-    "question": "¿Cuándo surge el movimiento “Back to the basics” o Retorno a lo básico?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Principios de los 60"
-      },
-      {
-        "key": "B",
-        "text": "Principios de los 70"
-      },
-      {
-        "key": "C",
-        "text": "Principios de los 80"
-      },
-      {
-        "key": "D",
-        "text": "Principios de los 90"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 7 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 43 · página 7"
-  },
-  {
-    "id": "q224",
-    "tema": 3,
-    "question": "Las asignaturas están estructuradas en:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Decretos de currículo"
-      },
-      {
-        "key": "B",
-        "text": "Unidades Didácticas"
-      },
-      {
-        "key": "C",
-        "text": "Portafolios"
-      },
-      {
-        "key": "D",
-        "text": "Competencias"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 8 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 34 · página 8"
-  },
-  {
-    "id": "q225",
-    "tema": 3,
-    "question": "El estilo o enfoque estructuralista utiliza una matematización:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Vertical"
-      },
-      {
-        "key": "B",
-        "text": "Horizontal"
-      },
-      {
-        "key": "C",
-        "text": "Escasa"
-      },
-      {
-        "key": "D",
-        "text": "Horizontal y ligeramente vertical"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 8 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 47 · página 8"
-  },
-  {
-    "id": "q229",
-    "tema": 2,
-    "question": "¿Qué organismo se encarga de fijar los objetivos, competencias clave, contenidos y criterios de evaluación de las diversas materias e itinerarios de ESO, Bachillerato y FP?",
-    "options": [
-      {
-        "key": "A",
-        "text": "El Estado"
-      },
-      {
-        "key": "B",
-        "text": "La Comunidad Autónoma"
-      },
-      {
-        "key": "C",
-        "text": "El centro educativo"
-      },
-      {
-        "key": "D",
-        "text": "El Ayuntamiento"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 9 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 52 · página 9"
-  },
-  {
-    "id": "q230",
-    "tema": 3,
-    "question": "¿Cómo es la enseñanza de las matemáticas según la corriente de enseñanza denominada “Retorno a lo básico”?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Recontextual"
-      },
-      {
-        "key": "B",
-        "text": "Algorítmica"
-      },
-      {
-        "key": "C",
-        "text": "Axiomática"
-      },
-      {
-        "key": "D",
-        "text": "Deductiva"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "TXT adicional",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 53 · página 9"
-  },
-  {
-    "id": "q231",
-    "tema": 2,
-    "question": "¿Qué bloque de Matemáticas sustituye al de funciones en Bachillerato de Ciencias Sociales?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Estadística aplicada a las Ciencias Sociales"
-      },
-      {
-        "key": "B",
-        "text": "Cálculo"
-      },
-      {
-        "key": "C",
-        "text": "Análisis"
-      },
-      {
-        "key": "D",
-        "text": "Probabilidad"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 9 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 54 · página 9"
-  },
-  {
-    "id": "q232",
-    "tema": 2,
-    "question": "Para que un alumno pueda acceder al FP de Grado Básico debe:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Haber cursado la ESO en su totalidad"
-      },
-      {
-        "key": "B",
-        "text": "Haber cursado tercero 3º de la ESO"
-      },
-      {
-        "key": "C",
-        "text": "Haber cursado el primer curso de un Ciclo Formativo de Grado Medio"
-      },
-      {
-        "key": "D",
-        "text": "Haber cursado primero de Bachillerato en su totalidad"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 10 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 55 · página 10"
-  },
-  {
-    "id": "q233",
-    "tema": 3,
-    "question": "¿Cuál de los siguientes términos no forma parte de las etapas que debe conseguir todo proceso de enseñanza-aprendizaje?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Planificación"
-      },
-      {
-        "key": "B",
-        "text": "Concreción"
-      },
-      {
-        "key": "C",
-        "text": "Evaluación"
-      },
-      {
-        "key": "D",
-        "text": "Ejecución"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 10 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 57 · página 10"
-  },
-  {
-    "id": "q234",
-    "tema": 1,
-    "question": "La numeración decimal con el cero se atribuye a la civilización:",
-    "options": [
-      {
-        "key": "A",
-        "text": "India"
-      },
-      {
-        "key": "B",
-        "text": "Romana"
-      },
-      {
-        "key": "C",
-        "text": "Griega"
-      },
-      {
-        "key": "D",
-        "text": "Sumeria"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 10 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 59 · página 10"
-  },
-  {
-    "id": "q235",
-    "tema": 2,
-    "question": "Señala la afirmación correcta respecto a la LOMLOE:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Todos los contenidos de matemáticas están organizados en sentidos, tanto en secundaria como en Bachillerato"
-      },
-      {
-        "key": "B",
-        "text": "Todos los contenidos de matemáticas están organizados en sentidos, únicamente en secundaria"
-      },
-      {
-        "key": "C",
-        "text": "Todos los contenidos de matemáticas están organizados en sentidos, únicamente en Bachillerato"
-      },
-      {
-        "key": "D",
-        "text": "Todos los contenidos de matemáticas están organizados en sentidos, únicamente en FP"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 11 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 61 · página 11"
-  },
-  {
-    "id": "q237",
-    "tema": 1,
-    "question": "Señale la respuesta correcta:",
-    "options": [
-      {
-        "key": "A",
-        "text": "El cero es más un concepto físico que matemático"
-      },
-      {
-        "key": "B",
-        "text": "El cero no es más que un concepto matemático"
-      },
-      {
-        "key": "C",
-        "text": "El cero es más un concepto filosófico que matemático"
-      },
-      {
-        "key": "D",
-        "text": "El cero no es más que un simple concepto"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 11 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 63 · página 11"
-  },
-  {
-    "id": "q239",
-    "tema": 2,
-    "question": "Los saberes básicos se refieren al:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Conjunto de conocimientos y actitudes que el alumno debe saber"
-      },
-      {
-        "key": "B",
-        "text": "Conjunto de destrezas y actitudes que el alumno debe adquirir antes de finalizar cada etapa"
-      },
-      {
-        "key": "C",
-        "text": "Conjunto de conocimientos, destrezas y actitudes que el alumno debe adquirir antes de iniciar cada etapa"
-      },
-      {
-        "key": "D",
-        "text": "Conjunto de conocimientos, destrezas y actitudes que el alumno debe adquirir antes de finalizar cada etapa"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 12 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 66 · página 12"
-  },
-  {
-    "id": "q240",
-    "tema": 3,
-    "question": "¿Cuál de las siguientes respuestas se trata de competencias específicas de las matemáticas?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Interpretar, modelizar y resolver problemas"
-      },
-      {
-        "key": "B",
-        "text": "Analizar las soluciones de un problema"
-      },
-      {
-        "key": "C",
-        "text": "Formular y comprobar conjeturas"
-      },
-      {
-        "key": "D",
-        "text": "Todas son correctas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 5 Cristina · página 12 · respuesta marcada con fuente coloreada",
-    "sourceRef": "Preguntas examen 5 Cristina · nº 67 · página 12"
-  },
-  {
-    "id": "q245",
-    "tema": 2,
-    "question": "¿Qué bloques se dan tanto en los 4 cursos de ESO como en las 2 de Bachillerato?:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Procesos, métodos y actitudes en matemáticas"
-      },
-      {
-        "key": "B",
-        "text": "Números y Álgebra."
-      },
-      {
-        "key": "C",
-        "text": "Todas las anteriores"
-      },
-      {
-        "key": "D",
-        "text": "Geometría, Estadística y Probabilidad."
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 2 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 5 · página 2"
-  },
-  {
-    "id": "q246",
-    "tema": 2,
-    "question": "¿Análisis es un bloque que se imparte en Matemáticas de?",
-    "options": [
-      {
-        "key": "A",
-        "text": "4 ESO"
-      },
-      {
-        "key": "B",
-        "text": "ESO y Bachillerato"
-      },
-      {
-        "key": "C",
-        "text": "No se imparte el bloque de análisis"
-      },
-      {
-        "key": "D",
-        "text": "1 y 2 de Bachillerato"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 2 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 6 · página 2"
-  },
-  {
-    "id": "q247",
-    "tema": 2,
-    "question": "¿Cómo se publican las distintas normas, competencias y currículos del Estado y las CCAA?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Anuncios en redes sociales"
-      },
-      {
-        "key": "B",
-        "text": "Ambas en Reales Decretos (RD)"
-      },
-      {
-        "key": "C",
-        "text": "Estado en Reales Decretos (RD) y CCAA en Decretos (D)"
-      },
-      {
-        "key": "D",
-        "text": "Estado en Decretos (D) y CCAA en Reales Decretos (RD)"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 2 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 7 · página 2"
-  },
-  {
-    "id": "q248",
-    "tema": 3,
-    "question": "¿Qué objetivo no se debe evaluar nunca?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Actitud y asistencia"
-      },
-      {
-        "key": "B",
-        "text": "Comprensión de conocimientos"
-      },
-      {
-        "key": "C",
-        "text": "Resolución de tareas y problemas"
-      },
-      {
-        "key": "D",
-        "text": "Demostración de resultados"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 2 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 8 · página 2"
-  },
-  {
-    "id": "q250",
-    "tema": 2,
-    "question": "¿Qué modalidad de matemáticas pertenece al bloque de asignaturas troncales?",
-    "options": [
-      {
-        "key": "A",
-        "text": "matemáticas I y II"
-      },
-      {
-        "key": "B",
-        "text": "matemáticas aplicadas a ciencias sociales I y II"
-      },
-      {
-        "key": "C",
-        "text": "Ninguna es correcta"
-      },
-      {
-        "key": "D",
-        "text": "ambas son correctas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 3 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 10 · página 3"
-  },
-  {
-    "id": "q251",
-    "tema": 2,
-    "question": "¿Qué bloque de contenidos comunes aparece en todo el currículo de matemáticas y en todos los niveles de ESO y Bachillerato?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Procesos, métodos y actitudes en matemáticas"
-      },
-      {
-        "key": "B",
-        "text": "Estadística"
-      },
-      {
-        "key": "C",
-        "text": "Números reales"
-      },
-      {
-        "key": "D",
-        "text": "Geometría"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 3 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 11 · página 3"
-  },
-  {
-    "id": "q252",
-    "tema": 2,
-    "question": "En el caso de la ESO, los objetivos se centran en:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Identificar elementos y formas Matemáticas"
-      },
-      {
-        "key": "B",
-        "text": "predisponer de una actitud abierta y reflexiva al encarar problemas"
-      },
-      {
-        "key": "C",
-        "text": "relacionar e integrar conocimientos matemáticos con aspectos de la sociedad y cultura actuales"
-      },
-      {
-        "key": "D",
-        "text": "todas son correctas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 3 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 12 · página 3"
-  },
-  {
-    "id": "q253",
-    "tema": 2,
-    "question": "En bachillerato, los objetivos son:",
-    "options": [
-      {
-        "key": "A",
-        "text": "valorar las matemáticas en el entorno científico tecnológico para una inminente salida al mundo laboral"
-      },
-      {
-        "key": "B",
-        "text": "valorar las matemáticas en el entorno científico tecnológico para proseguir con los estudios"
-      },
-      {
-        "key": "C",
-        "text": "ninguna es correcta"
-      },
-      {
-        "key": "D",
-        "text": "ambas son correctas"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 3 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 13 · página 3"
-  },
-  {
-    "id": "q254",
-    "tema": 2,
-    "question": "El peso o importancia de un bloque dentro de los cursos vendrá determinados por:",
-    "options": [
-      {
-        "key": "A",
-        "text": "La temporalización de las unidades y de las actividades, por parte del centro y los profesores"
-      },
-      {
-        "key": "B",
-        "text": "El estado"
-      },
-      {
-        "key": "C",
-        "text": "Las CCAA"
-      },
-      {
-        "key": "D",
-        "text": "Ninguna es correcta"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 4 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 14 · página 4"
-  },
-  {
-    "id": "q255",
-    "tema": 2,
-    "question": "En matemáticas, el bloque 1 (transversal) se desarrolla:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Al inicio de cada curso escolar"
-      },
-      {
-        "key": "B",
-        "text": "Al inicio de cada trimestre"
-      },
-      {
-        "key": "C",
-        "text": "En 1º ESO"
-      },
-      {
-        "key": "D",
-        "text": "Simultáneamente al resto de bloques, constituyendo el hilo conductor de la asignatura."
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 4 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 15 · página 4"
-  },
-  {
-    "id": "q256",
-    "tema": 2,
-    "question": "En las matemáticas orientadas a las enseñanzas académicas:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Se fortalecen los aspectos teóricos"
-      },
-      {
-        "key": "B",
-        "text": "Se fortalecen los aspectos prácticos"
-      },
-      {
-        "key": "C",
-        "text": "Se fortalecen tanto los aspectos teóricos como las aplicaciones prácticas en contextos reales de los contenidos impartidos."
-      },
-      {
-        "key": "D",
-        "text": "ninguna es correcta"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 4 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 16 · página 4"
-  },
-  {
-    "id": "q257",
-    "tema": 2,
-    "question": "Las matemáticas orientadas a las enseñanzas aplicadas:",
-    "options": [
-      {
-        "key": "A",
-        "text": "se dirigen a aquellos alumnos que desean estudiar bachillerato"
-      },
-      {
-        "key": "B",
-        "text": "se fortalecen los aspectos teóricos de los contenidos"
-      },
-      {
-        "key": "C",
-        "text": "se hace hincapié en la aplicación práctica de los contenidos del curso a contextos reales frente a la profundización en los aspectos teóricos"
-      },
-      {
-        "key": "D",
-        "text": "ninguna es correcta"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 4 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 17 · página 4"
-  },
-  {
-    "id": "q258",
-    "tema": 2,
-    "question": "La opción Matemáticas I y II:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ofrece una visión centrada en su utilización científica y la aplicación de procesos deductivos."
-      },
-      {
-        "key": "B",
-        "text": "están relacionadas con la resolución de problemas del mundo de la economía y todos los que deriven de la realidad social"
-      },
-      {
-        "key": "C",
-        "text": "ambas son correctas"
-      },
-      {
-        "key": "D",
-        "text": "ninguna es correcta"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 5 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 18 · página 5"
-  },
-  {
-    "id": "q259",
-    "tema": 2,
-    "question": "La opción Matemáticas aplicadas a las ciencias sociales:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Ofrece una visión centrada en su utilización científica y la aplicación de procesos deductivos."
-      },
-      {
-        "key": "B",
-        "text": "Están relacionadas con la resolución de problemas del mundo de la economía y todos los que deriven de la realidad social"
-      },
-      {
-        "key": "C",
-        "text": "Ambas son correctas"
-      },
-      {
-        "key": "D",
-        "text": "Ninguna es correcta"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 5 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 19 · página 5"
-  },
-  {
-    "id": "q260",
-    "tema": 3,
-    "question": "Los objetivos didácticos se definen...",
-    "options": [
-      {
-        "key": "A",
-        "text": "Con un verbo en infinitivo: conocer, manejar"
-      },
-      {
-        "key": "B",
-        "text": "Con un verbo sustantivado: manejo, utilización"
-      },
-      {
-        "key": "C",
-        "text": "Con un concepto"
-      },
-      {
-        "key": "D",
-        "text": "Con un adjetivo"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 6 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 25 · página 6"
-  },
-  {
-    "id": "q261",
-    "tema": 2,
-    "question": "¿Qué bloque desaparece de la asignatura “Matemáticas aplicadas a las ciencias sociales I y II”?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Álgebra y números"
-      },
-      {
-        "key": "B",
-        "text": "Análisis"
-      },
-      {
-        "key": "C",
-        "text": "Geometría"
-      },
-      {
-        "key": "D",
-        "text": "Procesos, métodos y actitudes en matemáticas"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 6 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 26 · página 6"
-  },
-  {
-    "id": "q263",
-    "tema": 3,
-    "question": "La técnica en la que un grupo de personas en conjunto deben crear ideas al iniciar una sesión de trabajo y puede conseguir involucrar y motivar a todo el grupo se denomina",
-    "options": [
-      {
-        "key": "A",
-        "text": "Phillips 66"
-      },
-      {
-        "key": "B",
-        "text": "Corrillos"
-      },
-      {
-        "key": "C",
-        "text": "Cuchicheo"
-      },
-      {
-        "key": "D",
-        "text": "Brainstorming."
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 7 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 29 · página 7"
-  },
-  {
-    "id": "q264",
-    "tema": 3,
-    "question": "¿Qué técnica es conveniente utilizar por lo general, al inicio de un curso o programa, para que los alumnos informen acerca de sus intereses, necesidades, problemas, deseos y sugerencias?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Corrillos"
-      },
-      {
-        "key": "B",
-        "text": "Discusión"
-      },
-      {
-        "key": "C",
-        "text": "Cuchicheos"
-      },
-      {
-        "key": "D",
-        "text": "Philips 66."
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 7 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 30 · página 7"
-  },
-  {
-    "id": "q265",
-    "tema": 3,
-    "question": "Señala cuál de estas afirmaciones es una ventaja de las técnica Phillips 66.",
-    "options": [
-      {
-        "key": "A",
-        "text": "Es una técnica de grupo para trabajo en el aula que tiene una duración exacta de 66 minutos."
-      },
-      {
-        "key": "B",
-        "text": "Se garantiza la participación de todo el alumnado."
-      },
-      {
-        "key": "C",
-        "text": "Se favorece el trabajo individual y el autoaprendizaje."
-      },
-      {
-        "key": "D",
-        "text": "Se trabaja en parejas y favorece el clima de trabajo a un volumen bajo."
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 7 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 31 · página 7"
-  },
-  {
-    "id": "q266",
-    "tema": 3,
-    "question": "¿En cuál, de estas técnicas de trabajo en grupo, se divide a la clase en parejas?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Cuchicheo"
-      },
-      {
-        "key": "B",
-        "text": "Discusión"
-      },
-      {
-        "key": "C",
-        "text": "Brainstorming"
-      },
-      {
-        "key": "D",
-        "text": "Philips 66."
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 7 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 32 · página 7"
-  },
-  {
-    "id": "q267",
-    "tema": 1,
-    "question": "¿Qué es el ábaco?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Una herramienta creada en la antigua China para hacer cálculos complejos"
-      },
-      {
-        "key": "B",
-        "text": "El primer teorema matemático Chino"
-      },
-      {
-        "key": "C",
-        "text": "Un útil de medida de la India antigua para medir ángulos"
-      },
-      {
-        "key": "D",
-        "text": "Un juego chino que permite crear formas mediante figuras geométricas."
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 8 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 33 · página 8"
-  },
-  {
-    "id": "q268",
-    "tema": 3,
-    "question": "Un ítem de un examen tipo test se compone",
-    "options": [
-      {
-        "key": "A",
-        "text": "Tronco y respuestas"
-      },
-      {
-        "key": "B",
-        "text": "Tronco, quid y distractores"
-      },
-      {
-        "key": "C",
-        "text": "Tronco, clave y distractores"
-      },
-      {
-        "key": "D",
-        "text": "Desarrollo, clave y distractores"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 8 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 35 · página 8"
-  },
-  {
-    "id": "q270",
-    "tema": 3,
-    "question": "¿Qué es Phillips 66?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Es un programa dinámico para la enseñanza y aprendizaje de las matemáticas"
-      },
-      {
-        "key": "B",
-        "text": "Una técnica de dinámica grupal para comentar o evaluar contenidos mediante la agrupación y gestión del tiempo."
-      },
-      {
-        "key": "C",
-        "text": "Una técnica de dinámicas de roles de grupo."
-      },
-      {
-        "key": "D",
-        "text": "Es una de las empresas de tecnología más grandes e importantes del mundo."
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 8 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 37 · página 8"
-  },
-  {
-    "id": "q271",
-    "tema": 3,
-    "question": "Un error común en la elaboración de preguntas tipo test es:",
-    "options": [
-      {
-        "key": "A",
-        "text": "El uso de cifras exactas"
-      },
-      {
-        "key": "B",
-        "text": "Escribir cifras con sus unidades de medida"
-      },
-      {
-        "key": "C",
-        "text": "Uso de adjetivos y adverbios superfluos"
-      },
-      {
-        "key": "D",
-        "text": "Que todas las opciones tengan la misma extensión."
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 9 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 38 · página 9"
-  },
-  {
-    "id": "q272",
-    "tema": 1,
-    "question": "¿A quién se debe la notación del número imaginario?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Dirichlet"
-      },
-      {
-        "key": "B",
-        "text": "Fourier"
-      },
-      {
-        "key": "C",
-        "text": "Euler"
-      },
-      {
-        "key": "D",
-        "text": "Riemann."
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 9 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 42 · página 9"
-  },
-  {
-    "id": "q273",
-    "tema": 1,
-    "question": "¿Cuál de los siguientes matemáticos no contribuyeron en el campo de la estadística en la época moderna?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Chebyshev y Kolmogorov"
-      },
-      {
-        "key": "B",
-        "text": "Liaupunov y Schwartz"
-      },
-      {
-        "key": "C",
-        "text": "Fisher y Galton"
-      },
-      {
-        "key": "D",
-        "text": "Viète y Ferrari."
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 13 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 58 · página 13"
-  },
-  {
-    "id": "q274",
-    "tema": 1,
-    "question": "En el siglo XX continua el avance de las matemáticas como profesión.",
-    "options": [
-      {
-        "key": "A",
-        "text": "con la formación de doctores"
-      },
-      {
-        "key": "B",
-        "text": "con salidas laborales en la industria y la educación"
-      },
-      {
-        "key": "C",
-        "text": "con la formación de doctores y salidas laborales en la industria y la educación"
-      },
-      {
-        "key": "D",
-        "text": "con el desarrollo de las TIC´s."
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 13 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 62 · página 13"
-  },
-  {
-    "id": "q275",
-    "tema": 1,
-    "question": "Charles Babbage en 1830,",
-    "options": [
-      {
-        "key": "A",
-        "text": "Inventó el artefacto para calcular valores de funciones polinómicas mediante el método de las diferencias"
-      },
-      {
-        "key": "B",
-        "text": "No se le considera el padre de las computadoras modernas"
-      },
-      {
-        "key": "C",
-        "text": "Usaba el álgebra de Boole"
-      },
-      {
-        "key": "D",
-        "text": "Participó en el Colossus."
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 14 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 65 · página 14"
-  }
-];
-
-  const TEST_SIZE = 40;
-  const MODE_LABELS = { general: "General", tema1: "Tema 1", tema2: "Tema 2", tema3: "Tema 3" };
-  const MODE_TEMA = { tema1: 1, tema2: 2, tema3: 3 };
+  const BANK_URL = new URLSearchParams(window.location.search).get("bank") || "questions.json";
   const LETTERS = ["A", "B", "C", "D"];
+  const FALLBACK_MODES = [
+    { key: "general", label: "General", tema: null },
+    { key: "tema1", label: "Tema 1", tema: 1 },
+    { key: "tema2", label: "Tema 2", tema: 2 },
+    { key: "tema3", label: "Tema 3", tema: 3 }
+  ];
+  const DEFAULT_SETTINGS = { questionCount: 40, penaltyEvery: 3 };
+  const SETTING_LIMITS = {
+    questionCount: { min: 1, max: 200 },
+    penaltyEvery: { min: 1, max: 10 }
+  };
+
+  let DATA_META = { total: 0, trusted: 0, untrusted: 0, trustedByTema: {}, allByTema: {} };
+  let QUESTIONS = [];
+  let APP_TITLE = "Test";
+  let MODES = FALLBACK_MODES.slice();
+  let MODE_LABELS = Object.fromEntries(MODES.map(mode => [mode.key, mode.label]));
+  let MODE_TEMA = Object.fromEntries(MODES.filter(mode => mode.tema != null).map(mode => [mode.key, mode.tema]));
+  let SOURCE_NAMES = [];
 
   const storage = (() => {
     try {
@@ -6605,10 +854,115 @@ const DATA_META = {
     elapsed: 0,
     timer: null,
     bestScores: loadBestScores(),
-    cycleUsed: { general: new Set(), tema1: new Set(), tema2: new Set(), tema3: new Set() },
+    cycleUsed: {},
     error: null,
-    finished: false
+    finished: false,
+    loading: true,
+    settingsOpen: false,
+    settings: loadSettings()
   };
+
+  function clampNumber(value, min, max, fallback) {
+    const parsed = Number.parseInt(value, 10);
+    if (!Number.isFinite(parsed)) return fallback;
+    return Math.min(max, Math.max(min, parsed));
+  }
+
+  function normalizedQuestionCount() {
+    return clampNumber(state.settings.questionCount, SETTING_LIMITS.questionCount.min, SETTING_LIMITS.questionCount.max, DEFAULT_SETTINGS.questionCount);
+  }
+
+  function normalizedPenaltyEvery() {
+    return clampNumber(state.settings.penaltyEvery, SETTING_LIMITS.penaltyEvery.min, SETTING_LIMITS.penaltyEvery.max, DEFAULT_SETTINGS.penaltyEvery);
+  }
+
+  function currentTestSize() {
+    return state.currentTest.length || normalizedQuestionCount();
+  }
+
+  function loadSettings() {
+    if (!storage) return { ...DEFAULT_SETTINGS, enabledSources: null };
+    try {
+      const saved = JSON.parse(storage.getItem("quizTrainerSettings") || "{}");
+      return {
+        questionCount: clampNumber(saved.questionCount, SETTING_LIMITS.questionCount.min, SETTING_LIMITS.questionCount.max, DEFAULT_SETTINGS.questionCount),
+        penaltyEvery: clampNumber(saved.penaltyEvery, SETTING_LIMITS.penaltyEvery.min, SETTING_LIMITS.penaltyEvery.max, DEFAULT_SETTINGS.penaltyEvery),
+        enabledSources: Array.isArray(saved.enabledSources) ? saved.enabledSources.slice() : null
+      };
+    } catch (_) {
+      return { ...DEFAULT_SETTINGS, enabledSources: null };
+    }
+  }
+
+  function saveSettings() {
+    if (!storage) return;
+    try {
+      storage.setItem("quizTrainerSettings", JSON.stringify({
+        questionCount: normalizedQuestionCount(),
+        penaltyEvery: normalizedPenaltyEvery(),
+        enabledSources: Array.isArray(state.settings.enabledSources) ? state.settings.enabledSources.slice() : null
+      }));
+    } catch (_) {}
+  }
+
+  function applyBank(bank) {
+    const title = bank.title || bank.questionBankName || "Test";
+    APP_TITLE = title;
+    document.title = title;
+    if (bank.defaultSettings) {
+      if (!storage || !storage.getItem("quizTrainerSettings")) {
+        state.settings.questionCount = clampNumber(bank.defaultSettings.questionCount, SETTING_LIMITS.questionCount.min, SETTING_LIMITS.questionCount.max, DEFAULT_SETTINGS.questionCount);
+        state.settings.penaltyEvery = clampNumber(bank.defaultSettings.penaltyEvery, SETTING_LIMITS.penaltyEvery.min, SETTING_LIMITS.penaltyEvery.max, DEFAULT_SETTINGS.penaltyEvery);
+        saveSettings();
+      }
+    }
+    MODES = Array.isArray(bank.modes) && bank.modes.length ? bank.modes : FALLBACK_MODES.slice();
+    MODE_LABELS = Object.fromEntries(MODES.map(mode => [mode.key, mode.label]));
+    MODE_TEMA = Object.fromEntries(MODES.filter(mode => mode.tema != null).map(mode => [mode.key, mode.tema]));
+    QUESTIONS = Array.isArray(bank.questions) ? bank.questions : [];
+    SOURCE_NAMES = Array.from(new Set(QUESTIONS.map(questionSourceName).filter(Boolean)))
+      .sort((a, b) => a.localeCompare(b, "es", { sensitivity: "base" }));
+    if (Array.isArray(state.settings.enabledSources)) {
+      const previousEnabledSources = state.settings.enabledSources.slice();
+      state.settings.enabledSources = state.settings.enabledSources.filter(source => SOURCE_NAMES.includes(source));
+      if (previousEnabledSources.length > 0 && state.settings.enabledSources.length === 0) {
+        state.settings.enabledSources = SOURCE_NAMES.slice();
+      }
+    } else {
+      state.settings.enabledSources = SOURCE_NAMES.slice();
+    }
+    DATA_META = bank.meta || {};
+    DATA_META.total = QUESTIONS.length;
+    DATA_META.trusted = QUESTIONS.filter(q => q.trusted === true).length;
+    DATA_META.untrusted = QUESTIONS.length - DATA_META.trusted;
+    state.cycleUsed = Object.fromEntries(MODES.map(mode => [mode.key, new Set()]));
+    if (!MODE_LABELS[state.selectedMode]) state.selectedMode = MODES[0]?.key || "general";
+  }
+
+  async function loadBank() {
+    state.loading = true;
+    state.error = null;
+    render();
+    try {
+      const response = await fetch(BANK_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const bank = await response.json();
+      applyBank(bank);
+      const validation = validateData();
+      state.loading = false;
+      if (!validation.ok) {
+        state.error = validation.problems.join("\n");
+        render();
+        return;
+      }
+      startNewTest(state.selectedMode);
+    } catch (error) {
+      stopTimer();
+      state.loading = false;
+      state.error = `No se ha podido cargar ${BANK_URL}. Sube index.html y questions.json en la misma carpeta de GitHub Pages. Detalle: ${error.message}`;
+      render();
+    }
+  }
 
   function normalizeQuestion(text) {
     return String(text || "")
@@ -6636,14 +990,46 @@ const DATA_META = {
     return result;
   }
 
+  function questionSourceName(q) {
+    const raw = String(q?.sourceRef || "").trim();
+    const first = raw.split(" · ")[0]?.trim();
+    return first || "Fuente no especificada";
+  }
+
+  function enabledSourcesSet() {
+    const selected = Array.isArray(state.settings.enabledSources) ? state.settings.enabledSources : SOURCE_NAMES;
+    return new Set(selected);
+  }
+
+  function sourceIsEnabled(sourceName) {
+    return enabledSourcesSet().has(sourceName);
+  }
+
+  function filterByEnabledSources(questions) {
+    if (!SOURCE_NAMES.length) return questions;
+    const enabled = enabledSourcesSet();
+    return questions.filter(q => enabled.has(questionSourceName(q)));
+  }
+
+  function sourceCounts() {
+    const counts = Object.fromEntries(SOURCE_NAMES.map(source => [source, 0]));
+    for (const q of QUESTIONS) {
+      if (q.trusted === true && LETTERS.includes(q.correctKey)) {
+        const source = questionSourceName(q);
+        counts[source] = (counts[source] || 0) + 1;
+      }
+    }
+    return counts;
+  }
+
   function trustedPool() {
-    return uniqueByQuestionText(QUESTIONS.filter(q => q.trusted === true && LETTERS.includes(q.correctKey)));
+    return uniqueByQuestionText(filterByEnabledSources(QUESTIONS).filter(q => q.trusted === true && LETTERS.includes(q.correctKey)));
   }
 
   function poolForMode(mode) {
     const pool = trustedPool();
-    if (mode === "general") return pool;
     const tema = MODE_TEMA[mode];
+    if (tema == null) return pool;
     return pool.filter(q => q.tema === tema);
   }
 
@@ -6657,24 +1043,27 @@ const DATA_META = {
   }
 
   function generateTest(mode) {
+    const size = normalizedQuestionCount();
     const pool = poolForMode(mode);
-    if (pool.length < TEST_SIZE) {
+    if (pool.length < size) {
       return {
-        error: `No hay suficientes preguntas fiables para ${MODE_LABELS[mode]}. Disponibles: ${pool.length}. Necesarias: ${TEST_SIZE}.`
+        error: `No hay suficientes preguntas fiables para ${MODE_LABELS[mode] || mode}. Disponibles: ${pool.length}. Necesarias: ${size}.`
       };
     }
-    const used = state.cycleUsed[mode];
+    const used = state.cycleUsed[mode] || new Set();
+    state.cycleUsed[mode] = used;
     let available = pool.filter(q => !used.has(questionUniqueKey(q)));
-    if (available.length < TEST_SIZE) {
+    if (available.length < size) {
       used.clear();
       available = pool.slice();
     }
-    const selected = shuffle(available).slice(0, TEST_SIZE);
+    const selected = shuffle(available).slice(0, size);
     for (const q of selected) used.add(questionUniqueKey(q));
     return { questions: selected };
   }
 
   function startNewTest(mode = state.selectedMode) {
+    if (state.loading) return;
     state.selectedMode = mode;
     const generated = generateTest(mode);
     if (generated.error) {
@@ -6690,22 +1079,6 @@ const DATA_META = {
     resetRunState();
     startTimer();
     render();
-  }
-
-  function restartCurrentTest() {
-    if (!state.currentTest.length) {
-      startNewTest(state.selectedMode);
-      return;
-    }
-    state.error = null;
-    resetRunState();
-    startTimer();
-    render();
-  }
-
-  function restartCycle() {
-    state.cycleUsed[state.selectedMode].clear();
-    startNewTest(state.selectedMode);
   }
 
   function resetRunState() {
@@ -6752,7 +1125,7 @@ const DATA_META = {
 
   function nextQuestion() {
     if (!state.answered) return;
-    if (state.currentIndex >= TEST_SIZE - 1) {
+    if (state.currentIndex >= currentTestSize() - 1) {
       finishTest();
       return;
     }
@@ -6777,7 +1150,23 @@ const DATA_META = {
   }
 
   function percent() {
-    return Math.round((state.score / TEST_SIZE) * 100);
+    return Math.round((state.score / currentTestSize()) * 100);
+  }
+
+  function gradeStats() {
+    const total = currentTestSize();
+    const penaltyEvery = normalizedPenaltyEvery();
+    const net = state.correct - (state.wrong / penaltyEvery);
+    const grade = Math.max(0, Math.min(10, (net / total) * 10));
+    return { net, grade, penaltyEvery, total };
+  }
+
+  function formatGrade(value) {
+    return Number(value).toFixed(1).replace(/\.0$/, "");
+  }
+
+  function penaltyLabel() {
+    return `1 por cada ${normalizedPenaltyEvery()} correctas`;
   }
 
   function formatTime(seconds) {
@@ -6790,14 +1179,13 @@ const DATA_META = {
     return h ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
   }
 
-  
-function startTimer() {
+  function startTimer() {
     stopTimer();
     state.startedAt = Date.now();
     state.elapsed = 0;
     state.timer = setInterval(() => {
       state.elapsed = Math.floor((Date.now() - state.startedAt) / 1000);
-      document.querySelectorAll('[data-time-stat]').forEach((node) => {
+      document.querySelectorAll("[data-time-stat]").forEach((node) => {
         node.textContent = formatTime(state.elapsed);
       });
     }, 1000);
@@ -6829,9 +1217,10 @@ function startTimer() {
 
   function updateBestScore() {
     const mode = state.selectedMode;
-    const current = { score: state.score, time: state.elapsed, date: new Date().toISOString() };
+    const stats = gradeStats();
+    const current = { grade: stats.grade, score: state.score, total: stats.total, time: state.elapsed, date: new Date().toISOString() };
     const previous = state.bestScores[mode];
-    if (!previous || current.score > previous.score || (current.score === previous.score && current.time < previous.time)) {
+    if (!previous || current.grade > previous.grade || (current.grade === previous.grade && current.time < previous.time)) {
       state.bestScores[mode] = current;
       saveBestScores();
     }
@@ -6839,35 +1228,108 @@ function startTimer() {
 
   function bestLabel(mode = state.selectedMode) {
     const best = state.bestScores[mode];
-    return best ? `${best.score}/${TEST_SIZE}` : "—";
+    if (!best) return "—";
+    if (typeof best.grade === "number") return `${formatGrade(best.grade)}/10`;
+    return best.score != null ? `${best.score}/${best.total || 40}` : "—";
   }
 
   function validateData() {
     const problems = [];
     QUESTIONS.forEach((q, i) => {
-      if (![1,2,3].includes(q.tema)) problems.push(`Pregunta ${i + 1}: tema inválido.`);
+      if (typeof q.tema !== "number") problems.push(`Pregunta ${i + 1}: tema inválido.`);
       if (!Array.isArray(q.options) || q.options.length !== 4) problems.push(`Pregunta ${i + 1}: no tiene cuatro opciones.`);
       if (q.trusted === true && !LETTERS.includes(q.correctKey)) problems.push(`Pregunta ${i + 1}: pregunta fiable sin correctKey válido.`);
     });
-    const counts = {
-      general: poolForMode("general").length,
-      tema1: poolForMode("tema1").length,
-      tema2: poolForMode("tema2").length,
-      tema3: poolForMode("tema3").length
-    };
-    for (const [mode, count] of Object.entries(counts)) {
-      if (count < TEST_SIZE) problems.push(`${MODE_LABELS[mode]}: solo hay ${count} preguntas fiables únicas.`);
-    }
+    const counts = Object.fromEntries(MODES.map(mode => [mode.key, poolForMode(mode.key).length]));
     return { ok: problems.length === 0, problems, counts };
   }
 
-  
+  function renderSettingsButton() {
+    return `
+      <button class="settings-trigger" data-action="open-settings" type="button" aria-label="Opciones">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.3 7.3 0 0 0-1.69-.98L14.5 2.42A.49.49 0 0 0 14 2h-4a.49.49 0 0 0-.5.42L9.12 5.07c-.61.24-1.18.56-1.69.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64l2.11 1.65c-.05.32-.08.65-.08.98s.03.66.08.98l-2.11 1.65a.5.5 0 0 0-.12.64l2 3.46c.13.23.4.32.6.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.61-.25 1.17-.58 1.69-.98l2.49 1c.2.1.47.01.6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.65ZM12 15.5A3.5 3.5 0 1 1 12 8a3.5 3.5 0 0 1 0 7.5Z"/></svg>
+      </button>
+    `;
+  }
+
+
+  function renderSourceSettings() {
+    if (!SOURCE_NAMES.length) return "";
+    const counts = sourceCounts();
+    const totalActive = SOURCE_NAMES.filter(source => sourceIsEnabled(source)).length;
+    return `
+          <div class="settings-item source-settings">
+            <div class="settings-label-row">
+              <div class="settings-label">Fuentes de preguntas</div>
+              <button class="mini-link" data-action="sources-all" type="button">Todas</button>
+            </div>
+            <div class="source-options" aria-label="Fuentes activas">
+              ${SOURCE_NAMES.map(source => `
+                <button class="source-choice ${sourceIsEnabled(source) ? "active" : ""}" data-source-toggle="${escapeHtml(source)}" type="button" aria-pressed="${sourceIsEnabled(source) ? "true" : "false"}">
+                  <span class="source-check">✓</span>
+                  <span class="source-name">${escapeHtml(source)}</span>
+                  <span class="source-count">${counts[source] || 0}</span>
+                </button>
+              `).join("")}
+            </div>
+            <p class="settings-note">Activas: ${totalActive}/${SOURCE_NAMES.length}. Al cambiar una fuente se genera un nuevo test con el filtro aplicado.</p>
+          </div>
+    `;
+  }
+
+  function renderSettingsModal() {
+    if (!state.settingsOpen) return "";
+    return `
+      <div class="settings-backdrop" data-action="close-settings"></div>
+      <section class="settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <button class="modal-close" data-action="close-settings" type="button" aria-label="Cerrar opciones">×</button>
+        <div>
+          <h2 id="settingsTitle">Opciones</h2>
+          <p>Ajustes del test, fuentes activas y cálculo de la nota final.</p>
+        </div>
+        <div class="settings-list">
+          <div class="settings-item">
+            <div class="settings-label">Nº de preguntas por test</div>
+            <div class="stepper">
+              <button class="step-btn" data-setting-step="questionCount" data-delta="-1" type="button" aria-label="Reducir preguntas">−</button>
+              <input class="step-input" data-setting-input="questionCount" type="text" pattern="[0-9]*" value="${normalizedQuestionCount()}" inputmode="numeric" autocomplete="off" aria-label="Número de preguntas por test">
+              <button class="step-btn" data-setting-step="questionCount" data-delta="1" type="button" aria-label="Aumentar preguntas">+</button>
+            </div>
+            <p class="settings-note">Si un tema no tiene suficientes preguntas, el programa avisará antes de iniciar ese test.</p>
+          </div>
+          <div class="settings-item">
+            <div class="settings-label">Penalización por pregunta incorrecta</div>
+            <div class="stepper">
+              <button class="step-btn" data-setting-step="penaltyEvery" data-delta="-1" type="button" aria-label="Aumentar penalización">−</button>
+              <div class="step-value">${penaltyLabel()}</div>
+              <button class="step-btn" data-setting-step="penaltyEvery" data-delta="1" type="button" aria-label="Reducir penalización">+</button>
+            </div>
+            <p class="settings-note">Fórmula: nota = correctas − incorrectas / ${normalizedPenaltyEvery()}, normalizada sobre 10.</p>
+          </div>
+          ${renderSourceSettings()}
+        </div>
+      </section>
+    `;
+  }
+
+  function renderLoading() {
+    return `
+      <main class="view">
+        <section class="frame loading-frame" aria-label="Cargando banco de preguntas">
+          <div class="loader" aria-hidden="true"></div>
+          <h1>Cargando preguntas</h1>
+          <p class="tiny-note">Leyendo ${escapeHtml(BANK_URL)}</p>
+        </section>
+      </main>
+    `;
+  }
 
   function renderStats() {
-    const qNum = state.finished ? TEST_SIZE : Math.min(state.currentIndex + 1, TEST_SIZE);
+    const total = currentTestSize();
+    const qNum = state.finished ? total : Math.min(state.currentIndex + 1, total);
     return `
-      <div class="stats-row" aria-live="polite">
-        <div class="stat-chip"><span class="stat-label">Pregunta</span><span class="stat-value">${qNum}/${TEST_SIZE}</span></div>
+      <div class="progress-row" aria-live="polite">
+        <div class="stat-chip"><span class="stat-label">Pregunta</span><span class="stat-value">${qNum}/${total}</span></div>
         <div class="stat-chip"><span class="stat-label">Correctas</span><span class="stat-value">${state.correct}</span></div>
         <div class="stat-chip"><span class="stat-label">Incorrectas</span><span class="stat-value">${state.wrong}</span></div>
         <div class="stat-chip"><span class="stat-label">Tiempo</span><span class="stat-value" data-time-stat>${formatTime(state.elapsed)}</span></div>
@@ -6879,13 +1341,12 @@ function startTimer() {
   function renderModeButtons() {
     return `
       <div class="mode-selector" role="tablist" aria-label="Modo de test">
-        ${Object.keys(MODE_LABELS).map(mode => `
-          <button class="mode-btn ${state.selectedMode === mode ? "active" : ""}" data-mode="${mode}" type="button">${MODE_LABELS[mode]}</button>
+        ${MODES.map(mode => `
+          <button class="mode-btn ${state.selectedMode === mode.key ? "active" : ""}" data-mode="${mode.key}" type="button">${escapeHtml(mode.label)}</button>
         `).join("")}
       </div>
     `;
   }
-
 
   function questionLengthClass(q) {
     const len = String(q?.question || "").length;
@@ -6895,7 +1356,7 @@ function startTimer() {
   }
 
   function sourceLabel(q) {
-    return q.sourceRef || q.source || "Fuente no especificada";
+    return q.sourceRef || "Fuente no especificada";
   }
 
   function renderQuiz() {
@@ -6958,14 +1419,17 @@ function startTimer() {
         <small>Respuesta correcta: ${m.correctKey}) ${escapeHtml(m.correctText)}</small>
       </article>
     `).join("") : `<article class="miss"><p>Sin errores en este test.</p></article>`;
+    const stats = gradeStats();
+    const total = currentTestSize();
 
     return `
       <main class="view">
         <section class="frame result-frame" aria-label="Resultados finales">
           <div class="result-hero">
             <span class="result-kicker">Test completado</span>
-            <div class="result-score"><strong>${state.score}</strong><span>/ ${TEST_SIZE}</span></div>
-            <p class="result-subtitle">${MODE_LABELS[state.selectedMode]} · ${percent()}% de aciertos · ${formatTime(state.elapsed)}</p>
+            <div class="grade-score"><span class="grade-prefix">Tu nota es:</span><strong>${formatGrade(stats.grade)}</strong><span class="grade-denom">/10</span></div>
+            <p class="result-subtitle"><strong>${state.score} / ${total}</strong> · ${escapeHtml(MODE_LABELS[state.selectedMode] || state.selectedMode)} · ${percent()}% de aciertos · ${formatTime(state.elapsed)}</p>
+            <p class="penalty-line">Penalización aplicada: ${penaltyLabel()}</p>
           </div>
           ${renderStats()}
           <div class="actions-row">
@@ -6982,24 +1446,14 @@ function startTimer() {
   }
 
   function renderError(message) {
-    const validation = validateData();
-    const counts = validation.counts || {};
+    const details = String(message || state.error || "Error de validación");
     return `
       <main class="view">
         <section class="frame error-card">
           <h1>No se puede iniciar el test</h1>
-          <div class="feedback is-wrong">${escapeHtml(message || state.error || "Error de validación")}</div>
-          <pre>${escapeHtml(validation.problems.join("\n") || "Sin detalles adicionales.")}</pre>
-          <div class="stats-row">
-            <div class="stat-chip"><span class="stat-label">Únicas</span><span class="stat-value">${DATA_META.total}</span></div>
-            <div class="stat-chip"><span class="stat-label">Fiables</span><span class="stat-value">${DATA_META.trusted}</span></div>
-            <div class="stat-chip"><span class="stat-label">No fiables</span><span class="stat-value">${DATA_META.untrusted}</span></div>
-            <div class="stat-chip"><span class="stat-label">Tema 1</span><span class="stat-value">${counts.tema1 || 0}</span></div>
-            <div class="stat-chip"><span class="stat-label">Tema 2</span><span class="stat-value">${counts.tema2 || 0}</span></div>
-            <div class="stat-chip"><span class="stat-label">Tema 3</span><span class="stat-value">${counts.tema3 || 0}</span></div>
-          </div>
+          <div class="feedback is-wrong">${escapeHtml(details)}</div>
           <div class="actions-row">
-            <button class="btn btn-primary" data-action="cycle" type="button">Reintentar</button>
+            <button class="btn btn-primary" data-action="new" type="button">Reintentar</button>
           </div>
           ${renderModeButtons()}
         </section>
@@ -7010,12 +1464,15 @@ function startTimer() {
   function render() {
     const app = document.getElementById("app");
     if (!app) return;
-    if (state.error) app.innerHTML = renderError(state.error);
-    else if (state.finished) app.innerHTML = renderResult();
-    else app.innerHTML = renderQuiz();
+    let body;
+    if (state.loading) body = renderLoading();
+    else if (state.error) body = renderError(state.error);
+    else if (state.finished) body = renderResult();
+    else body = renderQuiz();
+    app.innerHTML = renderSettingsButton() + body + renderSettingsModal();
   }
 
-function escapeHtml(value) {
+  function escapeHtml(value) {
     return String(value ?? "")
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
@@ -7024,7 +1481,60 @@ function escapeHtml(value) {
       .replace(/'/g, "&#039;");
   }
 
+  function changeSetting(name, delta) {
+    if (name === "questionCount") {
+      state.settings.questionCount = clampNumber(normalizedQuestionCount() + delta, SETTING_LIMITS.questionCount.min, SETTING_LIMITS.questionCount.max, DEFAULT_SETTINGS.questionCount);
+    }
+    if (name === "penaltyEvery") {
+      state.settings.penaltyEvery = clampNumber(normalizedPenaltyEvery() + delta, SETTING_LIMITS.penaltyEvery.min, SETTING_LIMITS.penaltyEvery.max, DEFAULT_SETTINGS.penaltyEvery);
+    }
+    saveSettings();
+    render();
+  }
+
+  function setQuestionCountFromInput(value) {
+    state.settings.questionCount = clampNumber(value, SETTING_LIMITS.questionCount.min, SETTING_LIMITS.questionCount.max, DEFAULT_SETTINGS.questionCount);
+    saveSettings();
+    render();
+  }
+
+
+  function resetCycles() {
+    state.cycleUsed = Object.fromEntries(MODES.map(mode => [mode.key, new Set()]));
+  }
+
+  function applySourceFilterChange() {
+    saveSettings();
+    resetCycles();
+    if (!state.loading) startNewTest(state.selectedMode);
+    else render();
+  }
+
+  function toggleSource(sourceName) {
+    if (!SOURCE_NAMES.includes(sourceName)) return;
+    const enabled = enabledSourcesSet();
+    if (enabled.has(sourceName)) enabled.delete(sourceName);
+    else enabled.add(sourceName);
+    state.settings.enabledSources = SOURCE_NAMES.filter(source => enabled.has(source));
+    applySourceFilterChange();
+  }
+
+  function enableAllSources() {
+    state.settings.enabledSources = SOURCE_NAMES.slice();
+    applySourceFilterChange();
+  }
+
   document.getElementById("app").addEventListener("click", (event) => {
+    const settingsStep = event.target.closest("[data-setting-step]");
+    if (settingsStep) {
+      changeSetting(settingsStep.dataset.settingStep, Number(settingsStep.dataset.delta || 0));
+      return;
+    }
+    const sourceToggle = event.target.closest("[data-source-toggle]");
+    if (sourceToggle) {
+      toggleSource(sourceToggle.dataset.sourceToggle);
+      return;
+    }
     const modeButton = event.target.closest("[data-mode]");
     if (modeButton) {
       startNewTest(modeButton.dataset.mode);
@@ -7047,28 +1557,26 @@ function escapeHtml(value) {
     if (!action) return;
     switch (action.dataset.action) {
       case "new": startNewTest(state.selectedMode); break;
-      case "restart": restartCurrentTest(); break;
-      case "cycle": restartCycle(); break;
-      case "next": nextQuestion(); break;
-      case "change-mode":
-        const firstMode = document.querySelector("[data-mode]");
-        if (firstMode) {
-          firstMode.focus();
-          firstMode.scrollIntoView({ block: "center", behavior: "smooth" });
-        }
-        break;
+      case "sources-all": enableAllSources(); break;
+      case "open-settings": state.settingsOpen = true; render(); break;
+      case "close-settings": state.settingsOpen = false; render(); break;
     }
   });
 
+  document.getElementById("app").addEventListener("change", (event) => {
+    const input = event.target.closest("[data-setting-input='questionCount']");
+    if (input) setQuestionCountFromInput(input.value);
+  });
 
-  const initialValidation = validateData();
-  if (!initialValidation.ok) {
-    state.error = initialValidation.problems.join("\n");
-    render();
-  } else {
-    startNewTest("general");
-  }
-  
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && state.settingsOpen) {
+      state.settingsOpen = false;
+      render();
+    }
+  });
+
+  loadBank();
+
   </script>
 </body>
 </html>
