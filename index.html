@@ -555,23 +555,26 @@ button { font: inherit; }
   "use strict";
 
 const DATA_META = {
-  "total": 229,
-  "trusted": 229,
+  "total": 222,
+  "trusted": 222,
   "untrusted": 0,
   "trustedByTema": {
-    "1": 96,
-    "2": 68,
+    "1": 91,
+    "2": 66,
     "3": 65
   },
   "allByTema": {
-    "1": 96,
-    "2": 68,
+    "1": 91,
+    "2": 66,
     "3": 65
   },
   "duplicatesRemoved": 133,
   "audit": "Banco saneado: duplicados semánticos eliminados; textos originales conservados sin renombrar",
   "duplicateExact": 77,
-  "duplicateFuzzy": 56
+  "duplicateFuzzy": 56,
+  "answerAudit": "Respuestas revisadas una a una contra manuales y normativa oficial; preguntas sin opción correcta fiable eliminadas",
+  "answerCorrections": 9,
+  "answerDeleted": 7
 };
 
   // Banco final saneado: no queda ninguna pregunta untrusted. Las preguntas sin respuesta fiable fueron eliminadas.
@@ -1495,33 +1498,6 @@ const DATA_META = {
     "sourceRef": "PDF 205 preguntas · nº 34"
   },
   {
-    "id": "q035",
-    "tema": 2,
-    "question": "¿Qué competencia clave LOMLOE se relaciona con interpretar y comunicar información numérica?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Competencia emprendedora"
-      },
-      {
-        "key": "B",
-        "text": "Competencia digital"
-      },
-      {
-        "key": "C",
-        "text": "Competencia en comunicación lingüística"
-      },
-      {
-        "key": "D",
-        "text": "Competencia ciudadana"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 35"
-  },
-  {
     "id": "q036",
     "tema": 3,
     "question": "¿En qué sentido matemático se incluye la gestión emocional del aprendizaje según LOMLOE?",
@@ -2305,33 +2281,6 @@ const DATA_META = {
     "sourceRef": "PDF 205 preguntas · nº 70"
   },
   {
-    "id": "q071",
-    "tema": 2,
-    "question": "Con respecto a la evaluación en la LOMLOE en la ESO:",
-    "options": [
-      {
-        "key": "A",
-        "text": "Dicha evaluación será particular por cada profesor"
-      },
-      {
-        "key": "B",
-        "text": "Dicha evaluación será concretada por el departamento pedagógico"
-      },
-      {
-        "key": "C",
-        "text": "Dicha evaluación será colegiada por todo el claustro"
-      },
-      {
-        "key": "D",
-        "text": "Dicha evaluación será concretada por el jefe de estudios"
-      }
-    ],
-    "correctKey": "C",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 71"
-  },
-  {
     "id": "q072",
     "tema": 3,
     "question": "Los Objetivos de Desarrollo Sostenible entraron en vigor en el año:",
@@ -2791,33 +2740,6 @@ const DATA_META = {
     "sourceRef": "PDF 205 preguntas · nº 90"
   },
   {
-    "id": "q091",
-    "tema": 1,
-    "question": "¿El símbolo de qué número se usó por primera vez en el siglo XVI?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Omega"
-      },
-      {
-        "key": "B",
-        "text": "Infinito"
-      },
-      {
-        "key": "C",
-        "text": "e"
-      },
-      {
-        "key": "D",
-        "text": "Pi"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 91"
-  },
-  {
     "id": "q092",
     "tema": 1,
     "question": "¿Qué consecuencia histórica tuvo el intento de demostrar el V postulado de Euclides?",
@@ -2974,7 +2896,7 @@ const DATA_META = {
         "text": "Egipcios"
       }
     ],
-    "correctKey": "D",
+    "correctKey": "B",
     "trusted": true,
     "source": "PDF 205 preguntas",
     "sourceRef": "PDF 205 preguntas · nº 97"
@@ -3088,33 +3010,6 @@ const DATA_META = {
     "sourceRef": "PDF 205 preguntas · nº 102"
   },
   {
-    "id": "q103",
-    "tema": 1,
-    "question": "¿Quién inventó el término \"derivada\" en el siglo XVIII?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Fermat"
-      },
-      {
-        "key": "B",
-        "text": "Barrow"
-      },
-      {
-        "key": "C",
-        "text": "Laplace"
-      },
-      {
-        "key": "D",
-        "text": "Fourier"
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 103"
-  },
-  {
     "id": "q104",
     "tema": 1,
     "question": "¿Cuándo nació la extensión a decimales del sistema decimal?",
@@ -3167,33 +3062,6 @@ const DATA_META = {
     "trusted": true,
     "source": "PDF 205 preguntas",
     "sourceRef": "PDF 205 preguntas · nº 105"
-  },
-  {
-    "id": "q106",
-    "tema": 1,
-    "question": "Euclides es un matemático alejandrino que:",
-    "options": [
-      {
-        "key": "A",
-        "text": "En realidad era griego"
-      },
-      {
-        "key": "B",
-        "text": "Su obra no es de geometría plana"
-      },
-      {
-        "key": "C",
-        "text": "Su obra no incluye teoría de números racionales e irracionales"
-      },
-      {
-        "key": "D",
-        "text": "Solo se conservan dos de sus al menos doce obras"
-      }
-    ],
-    "correctKey": "D",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 106"
   },
   {
     "id": "q107",
@@ -3383,33 +3251,6 @@ const DATA_META = {
     "trusted": true,
     "source": "PDF 205 preguntas",
     "sourceRef": "PDF 205 preguntas · nº 113"
-  },
-  {
-    "id": "q115",
-    "tema": 1,
-    "question": "¿Cuál es uno de los objetivos principales del Renacimiento Europeo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "Averiguar la medida de la Tierra"
-      },
-      {
-        "key": "B",
-        "text": "Erradicar la peste en Europa"
-      },
-      {
-        "key": "C",
-        "text": "Resolver el triángulo de Tartaglia"
-      },
-      {
-        "key": "D",
-        "text": "Dar sentido a la campana de Gauss"
-      }
-    ],
-    "correctKey": "A",
-    "trusted": true,
-    "source": "PDF 205 preguntas",
-    "sourceRef": "PDF 205 preguntas · nº 115"
   },
   {
     "id": "q116",
@@ -3703,7 +3544,7 @@ const DATA_META = {
         "text": "Con la matemática moderna (s.XIX y XX)"
       }
     ],
-    "correctKey": "D",
+    "correctKey": "C",
     "trusted": true,
     "source": "PDF 205 preguntas",
     "sourceRef": "PDF 205 preguntas · nº 127"
@@ -5107,7 +4948,7 @@ const DATA_META = {
         "text": "FP y Bachillerato en modalidad de Humanidades y Ciencias Sociales"
       }
     ],
-    "correctKey": "C",
+    "correctKey": "D",
     "trusted": true,
     "source": "TXT adicional",
     "sourceRef": "Preguntas examen 5 Cristina · nº 11 · página 2"
@@ -5242,7 +5083,7 @@ const DATA_META = {
         "text": "El profesorado"
       }
     ],
-    "correctKey": "C",
+    "correctKey": "B",
     "trusted": true,
     "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
     "sourceRef": "Preguntas examen 5 Cristina · nº 17 · página 3"
@@ -5269,7 +5110,7 @@ const DATA_META = {
         "text": "El profesorado"
       }
     ],
-    "correctKey": "C",
+    "correctKey": "B",
     "trusted": true,
     "source": "Preguntas examen 5 Cristina · página 3 · respuesta marcada con fuente coloreada",
     "sourceRef": "Preguntas examen 5 Cristina · nº 18 · página 3"
@@ -5296,7 +5137,7 @@ const DATA_META = {
         "text": "El profesorado"
       }
     ],
-    "correctKey": "D",
+    "correctKey": "B",
     "trusted": true,
     "source": "TXT adicional",
     "sourceRef": "Preguntas examen 5 Cristina · nº 19 · página 3"
@@ -5512,7 +5353,7 @@ const DATA_META = {
         "text": "El profesorado"
       }
     ],
-    "correctKey": "A",
+    "correctKey": "B",
     "trusted": true,
     "source": "Preguntas examen 5 Cristina · página 6 · respuesta marcada con fuente coloreada",
     "sourceRef": "Preguntas examen 5 Cristina · nº 32 · página 6"
@@ -5755,7 +5596,7 @@ const DATA_META = {
         "text": "Deductiva"
       }
     ],
-    "correctKey": "A",
+    "correctKey": "B",
     "trusted": true,
     "source": "TXT adicional",
     "sourceRef": "Preguntas examen 5 Cristina · nº 53 · página 9"
@@ -5782,7 +5623,7 @@ const DATA_META = {
         "text": "Probabilidad"
       }
     ],
-    "correctKey": "D",
+    "correctKey": "C",
     "trusted": true,
     "source": "Preguntas examen 5 Cristina · página 9 · respuesta marcada con fuente coloreada",
     "sourceRef": "Preguntas examen 5 Cristina · nº 54 · página 9"
@@ -6407,33 +6248,6 @@ const DATA_META = {
     "trusted": true,
     "source": "Preguntas examen 6 Otros · página 6 · respuesta marcada con sombreado amarillo",
     "sourceRef": "Preguntas examen 6 Otros · nº 26 · página 6"
-  },
-  {
-    "id": "q262",
-    "tema": 1,
-    "question": "El Colossus fue construido durante la segunda guerra mundial, ¿Quién lideró el equipo para construirlo?",
-    "options": [
-      {
-        "key": "A",
-        "text": "C. Babbage"
-      },
-      {
-        "key": "B",
-        "text": "A. Turing"
-      },
-      {
-        "key": "C",
-        "text": "H. Holleritz"
-      },
-      {
-        "key": "D",
-        "text": "J.M. Jacquard."
-      }
-    ],
-    "correctKey": "B",
-    "trusted": true,
-    "source": "Preguntas examen 6 Otros · página 6 · respuesta marcada con sombreado amarillo",
-    "sourceRef": "Preguntas examen 6 Otros · nº 28 · página 6"
   },
   {
     "id": "q263",
